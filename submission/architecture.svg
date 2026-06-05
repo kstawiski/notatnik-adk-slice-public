@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Notatnik Medyczny ADK Reliability Slice Architecture</title>
+  <desc id="desc">A public synthetic Cloud Run demo routes judge requests through an ADK orchestration loop, Gemini on Vertex AI, MCP data tools, public NCI PDQ grounding, deterministic generated-output scrubbing, and a judge-visible trace while keeping the production Notatnik product outside the public artifact.</desc>
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { font-family: Arial, Helvetica, sans-serif; fill: #111827; font-size: 34px; font-weight: 700; }
+      .subtitle { font-family: Arial, Helvetica, sans-serif; fill: #334155; font-size: 18px; }
+      .section-label { font-family: Arial, Helvetica, sans-serif; fill: #334155; font-size: 16px; font-weight: 700; letter-spacing: 0; }
+      .box-title { font-family: Arial, Helvetica, sans-serif; fill: #111827; font-size: 20px; font-weight: 700; }
+      .box-text { font-family: Arial, Helvetica, sans-serif; fill: #334155; font-size: 15px; }
+      .note { font-family: Arial, Helvetica, sans-serif; fill: #475569; font-size: 14px; }
+      .boundary-public { fill: #f8fbff; stroke: #0072b2; stroke-width: 2.5; stroke-dasharray: 10 7; }
+      .boundary-google { fill: #fffaf0; stroke: #e69f00; stroke-width: 2.5; stroke-dasharray: 10 7; }
+      .boundary-private { fill: #f8fafc; stroke: #64748b; stroke-width: 2.5; stroke-dasharray: 10 7; }
+      .external { fill: #f7fbff; stroke: #0072b2; stroke-width: 2.5; }
+      .public { fill: #eaf4fc; stroke: #0072b2; stroke-width: 2.5; }
+      .agent { fill: #edf8f3; stroke: #009e73; stroke-width: 2.5; }
+      .google { fill: #fff7e6; stroke: #e69f00; stroke-width: 2.5; }
+      .safety { fill: #fdf1f8; stroke: #cc79a7; stroke-width: 2.5; }
+      .private { fill: #f6f7f8; stroke: #64748b; stroke-width: 2.5; stroke-dasharray: 8 6; }
+      .arrow { stroke: #334155; stroke-width: 2.6; fill: none; marker-end: url(#arrowhead); }
+      .arrow-soft { stroke: #475569; stroke-width: 2.2; fill: none; marker-end: url(#arrowhead); }
+      .arrow-loop { stroke: #009e73; stroke-width: 2.5; fill: none; marker-end: url(#arrowhead-green); }
+      .arrow-dash { stroke: #64748b; stroke-width: 2.4; fill: none; stroke-dasharray: 8 7; marker-end: url(#arrowhead-gray); }
+      .label-bg { fill: #ffffff; stroke: #e2e8f0; stroke-width: 1; }
+      .label { font-family: Arial, Helvetica, sans-serif; fill: #334155; font-size: 13px; font-weight: 700; }
+    </style>
+    <marker id="arrowhead" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L11,4 L0,8 Z" fill="#334155"/>
+    </marker>
+    <marker id="arrowhead-green" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L11,4 L0,8 Z" fill="#009e73"/>
+    </marker>
+    <marker id="arrowhead-gray" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L11,4 L0,8 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="900"/>
+  <text class="title" x="52" y="58">Notatnik Medyczny: ADK Reliability Slice</text>
+  <text class="subtitle" x="54" y="88">Synthetic oncology documentation demo for Track 2 Optimize: ADK + Gemini on Vertex AI + MCP tools + deterministic safety checks</text>
+
+  <rect class="boundary-public" x="292" y="128" width="680" height="680" rx="18"/>
+  <text class="section-label" x="318" y="158">PUBLIC CLOUD RUN DEMO</text>
+
+  <rect class="boundary-google" x="1008" y="128" width="532" height="680" rx="18"/>
+  <text class="section-label" x="1034" y="158">GOOGLE CLOUD + PUBLIC DATA TOOL BOUNDARY</text>
+
+  <rect class="external" x="52" y="328" width="188" height="104" rx="14"/>
+  <text class="box-title" x="92" y="372">Judge</text>
+  <text class="box-text" x="79" y="399">Devpost reviewer</text>
+
+  <rect class="public" x="310" y="206" width="262" height="112" rx="14"/>
+  <text class="box-title" x="348" y="248">FastAPI UI/API</text>
+  <text class="box-text" x="337" y="276">/run, /healthz, /cases</text>
+  <text class="box-text" x="337" y="298">judge-visible controls</text>
+
+  <rect class="public" x="634" y="206" width="286" height="112" rx="14"/>
+  <text class="box-title" x="678" y="248">ADK Orchestrator</text>
+  <text class="box-text" x="665" y="276">SequentialAgent + LoopAgent</text>
+  <text class="box-text" x="665" y="298">routes draft, audit, evidence</text>
+
+  <rect class="agent" x="304" y="410" width="188" height="122" rx="14"/>
+  <text class="box-title" x="336" y="452">Documentation</text>
+  <text class="box-text" x="331" y="480">drafts structured</text>
+  <text class="box-text" x="331" y="502">oncology note</text>
+
+  <rect class="agent" x="536" y="410" width="188" height="122" rx="14"/>
+  <text class="box-title" x="576" y="452">QC Agent</text>
+  <text class="box-text" x="568" y="480">source-faithfulness</text>
+  <text class="box-text" x="568" y="502">contradiction audit</text>
+
+  <rect class="agent" x="768" y="410" width="188" height="122" rx="14"/>
+  <text class="box-title" x="812" y="452">Evidence</text>
+  <text class="box-text" x="800" y="480">optional guideline</text>
+  <text class="box-text" x="800" y="502">retrieval agent</text>
+
+  <rect class="safety" x="496" y="602" width="320" height="104" rx="14"/>
+  <text class="box-title" x="536" y="644">Generated-Output Scrub</text>
+  <text class="box-text" x="535" y="672">deterministic source-identifier</text>
+  <text class="box-text" x="535" y="694">redaction after LLM output</text>
+
+  <rect class="public" x="850" y="604" width="120" height="102" rx="14"/>
+  <text class="box-title" x="880" y="644">Trace</text>
+  <text class="box-text" x="872" y="672">QC status</text>
+  <text class="box-text" x="872" y="694">scrub PASS</text>
+
+  <rect class="google" x="1052" y="206" width="448" height="112" rx="14"/>
+  <text class="box-title" x="1108" y="248">Vertex AI Gemini</text>
+  <text class="box-text" x="1108" y="276">gemini-3.1-flash-lite</text>
+  <text class="box-text" x="1108" y="298">location: global</text>
+
+  <rect class="agent" x="1052" y="404" width="220" height="110" rx="14"/>
+  <text class="box-title" x="1090" y="446">ADK MCP Toolset</text>
+  <text class="box-text" x="1088" y="474">real stdio boundary</text>
+  <text class="box-text" x="1088" y="496">tool calls are explicit</text>
+
+  <rect class="google" x="1300" y="404" width="200" height="110" rx="14"/>
+  <text class="box-title" x="1335" y="446">Synthetic Tools</text>
+  <text class="box-text" x="1328" y="474">case fixtures</text>
+  <text class="box-text" x="1328" y="496">PubMed/trial-shaped</text>
+
+  <rect class="google" x="1052" y="596" width="448" height="104" rx="14"/>
+  <text class="box-title" x="1110" y="638">NCI PDQ Grounding</text>
+  <text class="box-text" x="1110" y="666">committed public treatment corpus</text>
+  <text class="box-text" x="1110" y="688">local embedding index; raw scraped pages excluded</text>
+
+  <rect class="boundary-private" x="52" y="642" width="230" height="132" rx="16"/>
+  <text class="section-label" x="74" y="672">PRIVATE PRODUCT</text>
+  <text class="box-title" x="75" y="706">Production Notatnik</text>
+  <text class="box-text" x="75" y="733">not in public artifact</text>
+  <text class="box-text" x="75" y="755">clinical IP stays private</text>
+
+  <path class="arrow" d="M240 380 L310 270"/>
+  <rect class="label-bg" x="244" y="300" width="64" height="25" rx="6"/>
+  <text class="label" x="257" y="318">HTTPS</text>
+
+  <path class="arrow" d="M572 262 L634 262"/>
+  <path class="arrow-soft" d="M777 318 L398 410"/>
+  <path class="arrow-soft" d="M777 318 L630 410"/>
+  <path class="arrow-soft" d="M777 318 L862 410"/>
+
+  <path class="arrow-loop" d="M492 456 C520 386, 610 376, 536 456"/>
+  <rect class="label-bg" x="496" y="374" width="176" height="25" rx="6"/>
+  <text class="label" x="508" y="392">self-correction loop</text>
+  <path class="arrow-loop" d="M724 494 C760 570, 472 572, 492 494"/>
+  <rect class="label-bg" x="586" y="552" width="104" height="25" rx="6"/>
+  <text class="label" x="598" y="570">reject/approve</text>
+
+  <path class="arrow-soft" d="M650 532 L650 602"/>
+  <path class="arrow-soft" d="M816 654 L850 654"/>
+  <path class="arrow-soft" d="M910 604 C930 548, 930 382, 920 318"/>
+
+  <path class="arrow" d="M920 262 L1052 262"/>
+  <rect class="label-bg" x="944" y="236" width="78" height="25" rx="6"/>
+  <text class="label" x="955" y="254">Gemini</text>
+
+  <path class="arrow" d="M956 470 L1052 458"/>
+  <rect class="label-bg" x="966" y="424" width="70" height="25" rx="6"/>
+  <text class="label" x="979" y="442">MCP</text>
+
+  <path class="arrow" d="M1272 459 L1300 459"/>
+  <path class="arrow" d="M1162 514 L1162 596"/>
+  <path class="arrow-soft" d="M1400 514 L1278 596"/>
+
+  <path class="arrow-dash" d="M282 710 C430 790, 760 790, 990 790 L990 492 L1052 492"/>
+  <rect class="label-bg" x="420" y="748" width="188" height="25" rx="6"/>
+  <text class="label" x="432" y="766">data-tool boundary only</text>
+
+  <text class="note" x="54" y="846">Submission safety boundary: synthetic cases only; no real PHI; no production clinical prompts, templates, rubrics, recognizers, or private patient systems in the public artifact.</text>
+  <text class="note" x="54" y="870">Demo emphasis: prompt optimization generalized; multi-agent QC is targeted; deterministic generated-output scrubbing mitigates the measured synthetic PII regression.</text>
+</svg>

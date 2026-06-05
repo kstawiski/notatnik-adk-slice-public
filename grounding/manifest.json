@@ -1,0 +1,106 @@
+[
+  {
+    "id": "bladder-treatment",
+    "title": "Bladder Cancer Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/bladder/hp/bladder-treatment-pdq",
+    "updated": "May 2, 2025",
+    "chars": 188343,
+    "sha256": "7c20f8799a7545e69fe81693e446beeacda262e31697f1e39a4fae3e9593f835"
+  },
+  {
+    "id": "breast-treatment",
+    "title": "Breast Cancer Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/breast/hp/breast-treatment-pdq",
+    "updated": "April 25, 2025",
+    "chars": 402657,
+    "sha256": "747ab8c70a0629237e4840831917672c21c123b277cd60145d0d4d6643644657"
+  },
+  {
+    "id": "colon-treatment",
+    "title": "Colon Cancer Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/colorectal/hp/colon-treatment-pdq",
+    "updated": "February 12, 2025",
+    "chars": 147718,
+    "sha256": "9e6232ae099ec7eda5ed8fdcb5f8e936377c048a4e5850422985aa7990e6dbc9"
+  },
+  {
+    "id": "lip-oral-cavity-treatment",
+    "title": "Lip and Oral Cavity Cancer Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/head-and-neck/hp/adult/lip-mouth-treatment-pdq",
+    "updated": "May 14, 2025",
+    "chars": 74309,
+    "sha256": "4a679e5865002fe1867a35b69af01fbec8f690b03da7f21ed334a9fadae17eb2"
+  },
+  {
+    "id": "melanoma-treatment",
+    "title": "Melanoma Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/skin/hp/melanoma-treatment-pdq",
+    "updated": "May 2, 2025",
+    "chars": 172878,
+    "sha256": "bbf2a32d178ace566ee7d3d8c386b38a577235bd60d2db9c93f9da69c980caf0"
+  },
+  {
+    "id": "merkel-cell-treatment",
+    "title": "Merkel Cell Carcinoma Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/skin/hp/merkel-cell-treatment-pdq",
+    "updated": "May 9, 2025",
+    "chars": 76150,
+    "sha256": "f016c79fb97e92781ff819778dcab005877fd850ab4f69471a9aea9862b8d1fc"
+  },
+  {
+    "id": "nsclc-treatment",
+    "title": "Non-Small Cell Lung Cancer Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/lung/hp/non-small-cell-lung-treatment-pdq",
+    "updated": "May 15, 2025",
+    "chars": 440246,
+    "sha256": "6e71f5cf5d73b205b86f003a912102571bbe84191a9939cf57496625d7756667"
+  },
+  {
+    "id": "ovarian-epithelial-treatment",
+    "title": "Ovarian Epithelial, Fallopian Tube, and Primary Peritoneal Cancer Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/ovarian/hp/ovarian-epithelial-treatment-pdq",
+    "updated": "May 14, 2025",
+    "chars": 169916,
+    "sha256": "a2869b523d7c2781f950e2de8d44703e147619539d54a24f554c3a001e9b1fc4"
+  },
+  {
+    "id": "pancreatic-treatment",
+    "title": "Pancreatic Cancer Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/pancreatic/hp/pancreatic-treatment-pdq",
+    "updated": "February 12, 2025",
+    "chars": 87056,
+    "sha256": "0197be6df8f2e4578f2b805fddc6d5eeb5a708b64995f254a1ac0b08948376fa"
+  },
+  {
+    "id": "prostate-treatment",
+    "title": "Prostate Cancer Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/prostate/hp/prostate-treatment-pdq",
+    "updated": "May 14, 2025",
+    "chars": 344022,
+    "sha256": "1bb68df871832ce6c2b92e83791355e11d4445c9ab854f18f298f287af79ddfc"
+  },
+  {
+    "id": "rectal-treatment",
+    "title": "Rectal Cancer Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/colorectal/hp/rectal-treatment-pdq",
+    "updated": "February 12, 2025",
+    "chars": 187461,
+    "sha256": "23994fa099260076ac40cdc3c49cbac165185217beea730989861365570967b6"
+  },
+  {
+    "id": "renal-cell-treatment",
+    "title": "Renal Cell Cancer Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/kidney/hp/kidney-treatment-pdq",
+    "updated": "May 13, 2025",
+    "chars": 86257,
+    "sha256": "9445ac4708dab0ad8e823aeb7833a685bf876cf2a077957b0294fbaa1606f47b"
+  },
+  {
+    "id": "vulvar-treatment",
+    "title": "Vulvar Cancer Treatment (PDQ®)–Health Professional Version",
+    "url": "https://www.cancer.gov/types/vulvar/hp/vulvar-treatment-pdq",
+    "updated": "May 14, 2025",
+    "chars": 60081,
+    "sha256": "89bd8d7cdd0efc29851387c8c3cba22530756692e7393acc14a53754eeb9d1d3"
+  }
+]

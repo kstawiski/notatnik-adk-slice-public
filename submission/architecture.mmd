@@ -1,0 +1,54 @@
+flowchart LR
+  judge[Devpost judge]
+
+  subgraph public["Public synthetic submission boundary"]
+    ui[Cloud Run FastAPI judge surface<br/>UI + /run + /healthz + /cases]
+    adk[ADK orchestrator<br/>SequentialAgent + LoopAgent]
+    doc[Documentation agent<br/>drafts structured note]
+    qc[QC agent<br/>source-faithfulness audit]
+    evidence[Evidence agent<br/>optional grounding]
+    scrub[Deterministic generated-output scrub<br/>redacts source identifiers]
+    output[Judge-visible output<br/>source case + final note + QC trace + scrub status]
+  end
+
+  subgraph google["Google Cloud and public tool boundary"]
+    vertex[Vertex AI Gemini<br/>gemini-3.1-flash-lite<br/>location: global]
+    mcp[ADK MCP toolset<br/>stdio boundary]
+    synth[Synthetic data tools<br/>cases + PubMed/trial-shaped records]
+    pdq[NCI PDQ local grounding<br/>committed corpus + index]
+  end
+
+  private[Production Notatnik boundary<br/>not included in public artifact<br/>no proprietary prompts/templates/rubrics/recognizers]
+
+  judge --> ui
+  ui --> adk
+  adk --> doc
+  adk --> qc
+  adk --> evidence
+  doc -. self-correction loop .-> qc
+  qc -. reject/approve .-> doc
+  doc --> vertex
+  qc --> vertex
+  evidence --> vertex
+  doc --> mcp
+  qc --> mcp
+  evidence --> mcp
+  mcp --> synth
+  mcp --> pdq
+  adk --> scrub
+  scrub --> output
+  output --> ui
+  private -. data-tool boundary only .-> mcp
+
+  classDef external fill:#f7fbff,stroke:#0072b2,color:#111827;
+  classDef public fill:#eaf4fc,stroke:#0072b2,color:#111827;
+  classDef agent fill:#edf8f3,stroke:#009e73,color:#111827;
+  classDef google fill:#fff7e6,stroke:#e69f00,color:#111827;
+  classDef safety fill:#fdf1f8,stroke:#cc79a7,color:#111827;
+  classDef private fill:#f6f7f8,stroke:#6b7280,color:#111827,stroke-dasharray: 6 5;
+  class judge external;
+  class ui,adk,output public;
+  class doc,qc,evidence,mcp agent;
+  class vertex,synth,pdq google;
+  class scrub safety;
+  class private private;

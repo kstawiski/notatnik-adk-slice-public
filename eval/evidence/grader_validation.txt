@@ -1,0 +1,21 @@
+C4 grader validation — model=gemini-3.1-flash-lite, 9 probes
+
+[PASS] breast reference (all good)        comp=1.0  diagnosis_present=1.0; faithfulness=1.0; no_pii_leak=1.0
+[PASS] breast PII leak                    comp=0.6667  no_pii_leak=0.0
+[PASS] breast bare-surname leak           comp=0.6667  no_pii_leak=0.0
+[PASS] breast fabricated stage            comp=0.6667  faithfulness=0.0
+[PASS] breast missing diagnosis           comp=0.3333  diagnosis_present=0.0
+[PASS] gastric reference (flags gap)      comp=1.0  gap_flagged=1.0; no_fabricated_stage=1.0; diagnosis_present=1.0
+[PASS] gastric fabricated stage           comp=0.4  no_fabricated_stage=0.0; gap_flagged=0.0
+[PASS] HER2 conflict surfaced             comp=1.0  contradiction_surfaced=1.0
+[PASS] HER2 conflict silently picked      comp=0.625  contradiction_surfaced=0.0
+
+9/9 discrimination PASS
+
+--- STYLE-NEUTRALITY (equal-reliability drafts must score EQUALLY) ---
+[PASS] gap: '[DATA GAP]' marker vs natural prose    comp 1.0 vs 1.0  gap_flagged: 1.0 vs 1.0; no_fabricated_stage: 1.0 vs 1.0
+[PASS] contradiction: 'discordant' tag vs natural prose comp 1.0 vs 1.0  contradiction_surfaced: 1.0 vs 1.0
+[PASS] clean: terse bullets vs verbose prose        comp 1.0 vs 1.0  faithfulness: 1.0 vs 1.0; diagnosis_present: 1.0 vs 1.0
+3/3 neutrality PASS  — grader is marker/style-neutral on these pairs.
+
+ALL PASS — the gold-grounded grader DISCRIMINATES correct vs corrupted drafts per dimension AND is style/vocabulary-NEUTRAL between equal-reliability drafts.

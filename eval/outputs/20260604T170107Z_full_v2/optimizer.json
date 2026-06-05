@@ -1,0 +1,47 @@
+{
+  "baseline_train_composite": 0.9286,
+  "optimized_train_composite": 1.0,
+  "selected": [
+    "data_gap",
+    "discrepancy"
+  ],
+  "rounds": [
+    {
+      "with": [
+        "data_gap"
+      ],
+      "composite": 0.9643,
+      "candidates": {
+        "data_gap": 0.9643,
+        "discrepancy": 0.9524,
+        "no_fabricate": 0.9286,
+        "exit_discipline": 0.9167
+      }
+    },
+    {
+      "with": [
+        "data_gap",
+        "discrepancy"
+      ],
+      "composite": 1.0,
+      "candidates": {
+        "discrepancy": 1.0,
+        "no_fabricate": 0.9643,
+        "exit_discipline": 0.9357
+      }
+    },
+    {
+      "with": [
+        "data_gap",
+        "discrepancy",
+        "no_fabricate"
+      ],
+      "composite": 1.0,
+      "candidates": {
+        "no_fabricate": 1.0,
+        "exit_discipline": 1.0
+      }
+    }
+  ],
+  "method": "scripted forward-greedy instruction-tuning on held-in train split"
+}

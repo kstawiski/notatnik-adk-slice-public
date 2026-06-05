@@ -1,0 +1,8 @@
+# EVAL-ONLY dependencies (C4). Deliberately NOT in the deployed requirements.txt — the judged
+# Cloud Run artifact (C6) does not run the eval or the PII recognizer.
+# PII scoring uses the GENERIC, open Presidio recognizer with the default English spaCy model,
+# never the proprietary Polish recognizer used outside this public demo.
+presidio_analyzer==2.2.359
+spacy==3.8.13
+# spaCy model (install with: python -m spacy download en_core_web_lg):
+en_core_web_lg==3.8.0

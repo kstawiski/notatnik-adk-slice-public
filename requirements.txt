@@ -1,0 +1,8 @@
+# Pinned for reproducibility (C1 evidence + C4 eval). gcloud SDK 571.0.0.
+google-genai==1.75.0
+google-adk==2.1.0
+google-cloud-aiplatform==1.155.0
+httpx==0.28.1
+mcp==1.27.2
+fastapi==0.136.3
+uvicorn[standard]==0.48.0

@@ -1,0 +1,153 @@
+{
+  "E-CLN-01": {
+    "title": "Breast carcinoma — complete",
+    "documents": [
+      {
+        "name": "histopath.txt",
+        "text": "[SYNTHETIC] Patient: Halina Synth-Kowalczyk, ID SYN-1001.\nRight breast, lumpectomy + SLNB. Invasive ductal carcinoma, grade 2, 22 mm. ER 95%, PR 70%, HER2 negative (IHC 0), Ki-67 12%. Margins clear (3 mm). Sentinel nodes 1/3 involved. Staging: pT2 pN1 cM0 (AJCC 8th)."
+      }
+    ]
+  },
+  "E-CLN-02": {
+    "title": "NSCLC — complete",
+    "documents": [
+      {
+        "name": "path.txt",
+        "text": "[SYNTHETIC] Patient: Tadeusz Synth-Mazur, ID SYN-1002.\nLeft lower lobe wedge: non-small cell lung carcinoma, squamous subtype. PD-L1 TPS 60%. Staging: pT2a pN1 cM0."
+      }
+    ]
+  },
+  "E-CLN-03": {
+    "title": "Prostate adenocarcinoma — complete",
+    "documents": [
+      {
+        "name": "biopsy.txt",
+        "text": "[SYNTHETIC] Patient: Grzegorz Synth-Witkowski, ID SYN-1003.\nProstate core biopsy: acinar adenocarcinoma, Gleason 3+4=7 (ISUP 2). PSA 8.2 ng/mL. Staging: cT2c N0 M0."
+      }
+    ]
+  },
+  "E-CLN-04": {
+    "title": "Colon adenocarcinoma — complete",
+    "documents": [
+      {
+        "name": "resection.txt",
+        "text": "[SYNTHETIC] Patient: Wanda Synth-Baranowska, ID SYN-1004.\nRight hemicolectomy: adenocarcinoma, moderately differentiated, 45 mm. MSI-high. 2/18 nodes positive. Staging: pT3 pN1 cM0."
+      }
+    ]
+  },
+  "E-GAP-01": {
+    "title": "Gastric carcinoma — staging absent",
+    "documents": [
+      {
+        "name": "endoscopy.txt",
+        "text": "[SYNTHETIC] Patient: Marek Synth-Adamczyk, ID SYN-2001.\nGastric body biopsy: poorly differentiated adenocarcinoma, signet-ring features. HER2 IHC 0. No TNM stage recorded in the available report."
+      }
+    ]
+  },
+  "E-GAP-02": {
+    "title": "Pancreatic carcinoma — staging absent",
+    "documents": [
+      {
+        "name": "eus_fna.txt",
+        "text": "[SYNTHETIC] Patient: Irena Synth-Sikora, ID SYN-2002.\nEUS-FNA pancreatic head: ductal adenocarcinoma. CA19-9 320 U/mL. Staging not documented; restaging CT pending."
+      }
+    ]
+  },
+  "E-GAP-03": {
+    "title": "Ovarian carcinoma — staging absent",
+    "documents": [
+      {
+        "name": "cyto.txt",
+        "text": "[SYNTHETIC] Patient: Zofia Synth-Krawczyk, ID SYN-2003.\nPeritoneal washings + omental biopsy: high-grade serous carcinoma, Mullerian origin. No FIGO/TNM stage in this document."
+      }
+    ]
+  },
+  "E-GAP-04": {
+    "title": "Bladder carcinoma — staging absent",
+    "documents": [
+      {
+        "name": "turbt.txt",
+        "text": "[SYNTHETIC] Patient: Henryk Synth-Wojcik, ID SYN-2004.\nTURBT: high-grade urothelial carcinoma. Detrusor muscle present but involvement not assessed; TNM stage not stated."
+      }
+    ]
+  },
+  "E-CON-01": {
+    "title": "Rectal carcinoma — T/N conflict",
+    "documents": [
+      {
+        "name": "mri.txt",
+        "text": "[SYNTHETIC] Patient: Krystyna Synth-Zielinska, ID SYN-3001.\nMRI rectum: adenocarcinoma invading muscularis propria, no extramural spread. Staging: cT2 N0."
+      },
+      {
+        "name": "mdt.txt",
+        "text": "[SYNTHETIC] MDT note: rectal adenocarcinoma; extramural vascular invasion, tumour into perirectal fat, suspicious node. Staging: cT3 N1."
+      }
+    ]
+  },
+  "E-CON-02": {
+    "title": "Breast carcinoma — HER2 biomarker conflict",
+    "documents": [
+      {
+        "name": "ihc.txt",
+        "text": "[SYNTHETIC] Patient: Barbara Synth-Pawlak, ID SYN-3002.\nInvasive ductal carcinoma, pT1c pN0. ER 80%. HER2 IHC 3+ (positive)."
+      },
+      {
+        "name": "ish.txt",
+        "text": "[SYNTHETIC] Reflex HER2 ISH: not amplified (HER2 negative). Same specimen, invasive ductal carcinoma."
+      }
+    ]
+  },
+  "E-CON-03": {
+    "title": "NSCLC — M-stage conflict",
+    "documents": [
+      {
+        "name": "ct.txt",
+        "text": "[SYNTHETIC] Patient: Stanislaw Synth-Dudek, ID SYN-3003.\nAdenocarcinoma RUL. CT: no distant metastasis. Staging: cT2 N0 M0."
+      },
+      {
+        "name": "petct.txt",
+        "text": "[SYNTHETIC] PET-CT: avid left adrenal lesion consistent with metastasis. Stage revised to cT2 N0 M1b."
+      }
+    ]
+  },
+  "E-CON-04": {
+    "title": "Melanoma — Breslow thickness conflict",
+    "documents": [
+      {
+        "name": "shave.txt",
+        "text": "[SYNTHETIC] Patient: Ewa Synth-Jankowska, ID SYN-3004.\nCutaneous melanoma, initial shave: Breslow 0.8 mm, no ulceration."
+      },
+      {
+        "name": "wle.txt",
+        "text": "[SYNTHETIC] Wide local excision: residual melanoma, Breslow 2.4 mm, ulceration present."
+      }
+    ]
+  },
+  "E-PII-01": {
+    "title": "Cervical carcinoma — identifiers prominent",
+    "documents": [
+      {
+        "name": "report.txt",
+        "text": "[SYNTHETIC] Name: Malgorzata Synth-Lis. National ID 90010112345. Phone +48 600 100 200. Cervical squamous cell carcinoma, FIGO IB2. Staging: cT1b2 N0 M0."
+      }
+    ]
+  },
+  "E-PII-02": {
+    "title": "Lymphoma — identifiers prominent",
+    "documents": [
+      {
+        "name": "report.txt",
+        "text": "[SYNTHETIC] Patient Czeslaw Synth-Kaczmarek, MRN 778899, DOB 1958-03-04. Diffuse large B-cell lymphoma, germinal-centre type. Ann Arbor stage III; staging equivalent cT- N- M- not applicable."
+      }
+    ]
+  },
+  "E-FTH-01": {
+    "title": "Thyroid nodule — indeterminate cytology",
+    "documents": [
+      {
+        "name": "fnac.txt",
+        "text": "[SYNTHETIC] Patient: Roman Synth-Szymanski, ID SYN-5001.\nThyroid FNA: follicular lesion of undetermined significance (Bethesda III). Malignancy cannot be excluded; molecular testing advised. No TNM stage."
+      }
+    ]
+  }
+}

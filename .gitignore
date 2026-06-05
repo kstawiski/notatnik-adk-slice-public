@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+*.local
+grounding/pdq_raw/
+.pytest_cache/
+triple_consensus_logs/
+agents/evidence/
+output_audit.txt

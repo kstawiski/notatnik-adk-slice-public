@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Notatnik Medyczny ADK Reliability Slice</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #17201d;
+        --muted: #5e6b66;
+        --line: #d7ddd9;
+        --wash: #f7f9f7;
+        --panel: #ffffff;
+        --teal: #0f766e;
+        --teal-dark: #115e59;
+        --amber: #a65f00;
+        --ok: #1b7f4c;
+        --bad: #b3261e;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: var(--wash);
+      }
+      header {
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .wrap {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+      .top {
+        min-height: 78px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        line-height: 1.2;
+        font-weight: 740;
+        letter-spacing: 0;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 5px;
+      }
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      select, button {
+        height: 38px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--ink);
+        font: inherit;
+        font-size: 14px;
+      }
+      select {
+        min-width: 250px;
+        padding: 0 34px 0 10px;
+      }
+      button {
+        border-color: var(--teal-dark);
+        background: var(--teal);
+        color: white;
+        padding: 0 14px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button:disabled {
+        cursor: wait;
+        opacity: 0.7;
+      }
+      .toggle {
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--panel);
+        color: var(--muted);
+        font-size: 13px;
+        white-space: nowrap;
+      }
+      .toggle input {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        accent-color: var(--teal);
+      }
+      main {
+        padding: 20px 0 34px;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(120px, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .metric, .pane {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .metric {
+        padding: 12px;
+        min-height: 70px;
+      }
+      .metric span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .metric strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 20px;
+        line-height: 1.1;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .pane {
+        min-height: 310px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .pane h2 {
+        margin: 0;
+        padding: 12px 14px;
+        font-size: 14px;
+        line-height: 1.2;
+        border-bottom: 1px solid var(--line);
+      }
+      pre {
+        margin: 0;
+        padding: 14px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow: auto;
+        font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        flex: 1;
+      }
+      .trace {
+        margin-top: 14px;
+      }
+      .trace pre {
+        max-height: 280px;
+      }
+      .ok { color: var(--ok); }
+      .bad { color: var(--bad); }
+      .amber { color: var(--amber); }
+      #status {
+        color: var(--muted);
+        font-size: 13px;
+        min-width: 180px;
+      }
+      @media (max-width: 900px) {
+        .top { align-items: flex-start; flex-direction: column; padding: 16px 0; }
+        .controls { justify-content: flex-start; width: 100%; }
+        select { min-width: 0; width: min(100%, 360px); }
+        .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap top">
+        <div>
+          <h1>Notatnik Medyczny ADK Reliability Slice</h1>
+          <div class="sub">Track 2 Optimize | Gemini on Vertex AI | ADK + MCP | synthetic oncology cases</div>
+        </div>
+        <div class="controls">
+          <select id="caseSelect" aria-label="Synthetic case"></select>
+          <label class="toggle">
+            <input id="evidenceToggle" type="checkbox" />
+            Evidence
+          </label>
+          <button id="runBtn" type="button">Run</button>
+          <span id="status">Loading cases...</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="metrics" aria-label="Run metrics">
+        <div class="metric"><span>QC status</span><strong id="mQc">-</strong></div>
+        <div class="metric"><span>Drafts</span><strong id="mDrafts">-</strong></div>
+        <div class="metric"><span>Rejections</span><strong id="mReject">-</strong></div>
+        <div class="metric"><span>Self-corrected</span><strong id="mSelf">-</strong></div>
+        <div class="metric"><span>Generated scrub</span><strong id="mPii">-</strong></div>
+      </section>
+
+      <section class="grid">
+        <article class="pane">
+          <h2>Source</h2>
+          <pre id="sourceOut">Select a case and run the slice.</pre>
+        </article>
+        <article class="pane">
+          <h2>Before</h2>
+          <pre id="beforeOut">-</pre>
+        </article>
+        <article class="pane">
+          <h2>After</h2>
+          <pre id="afterOut">-</pre>
+        </article>
+      </section>
+
+      <section class="pane trace">
+        <h2>ADK Trace</h2>
+        <pre id="traceOut">-</pre>
+      </section>
+    </main>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const state = { cases: [] };
+
+      function setStatus(text, cls = "") {
+        const el = $("status");
+        el.textContent = text;
+        el.className = cls;
+      }
+
+      function traceText(trace) {
+        const lines = [
+          `doc_drafts=${trace.doc_drafts}`,
+          `qc_rejections=${trace.qc_rejections}`,
+          `qc_passed=${trace.qc_passed}`,
+          `self_corrected=${trace.self_corrected}`,
+          `tool_calls=${trace.tool_calls.join(", ")}`,
+          "",
+        ];
+        for (const event of trace.events) {
+          if (event.type === "tool_call") lines.push(`[${event.author}] -> ${event.name}`);
+          if (event.type === "tool_response") lines.push(`[${event.author}] <- ${event.name}`);
+          if (event.type === "text") lines.push(`[${event.author}] ${event.text}`);
+        }
+        return lines.join("\n");
+      }
+
+      async function loadCases() {
+        const res = await fetch("/cases");
+        state.cases = await res.json();
+        const select = $("caseSelect");
+        select.innerHTML = "";
+        for (const c of state.cases) {
+          const opt = document.createElement("option");
+          opt.value = c.case_id;
+          opt.textContent = `${c.case_id} - ${c.title}`;
+          if (c.case_id === "CASE-003") opt.selected = true;
+          select.appendChild(opt);
+        }
+        setStatus(`${state.cases.length} cases ready`, "ok");
+      }
+
+      async function runCase() {
+        const btn = $("runBtn");
+        btn.disabled = true;
+        setStatus("Running Vertex agent...", "amber");
+        try {
+          const res = await fetch("/run", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              case_id: $("caseSelect").value,
+              max_iterations: 4,
+              include_evidence: $("evidenceToggle").checked,
+            }),
+          });
+          if (!res.ok) throw new Error(await res.text());
+          const data = await res.json();
+          $("sourceOut").textContent = data.source.text;
+          $("beforeOut").textContent = `${data.before.label}\n\n${data.before.text}`;
+          const evidence = data.after.evidence_requested ? (data.after.evidence || "(none)") : "(not requested in fast path)";
+          $("afterOut").textContent = `${data.after.draft}\n\nEvidence\n${evidence}`;
+          $("traceOut").textContent = traceText(data.trace);
+          $("mQc").textContent = data.trace.qc_passed ? "PASS" : "HOLD";
+          $("mQc").className = data.trace.qc_passed ? "ok" : "bad";
+          $("mDrafts").textContent = data.trace.doc_drafts;
+          $("mReject").textContent = data.trace.qc_rejections;
+          $("mSelf").textContent = data.trace.self_corrected ? "yes" : "no";
+          $("mPii").textContent = data.safety.contains_source_identifier_after_scrub ? "HOLD" : "PASS";
+          $("mPii").className = data.safety.contains_source_identifier_after_scrub ? "bad" : "ok";
+          setStatus(`${data.vertex.model} | ${data.vertex.location}`, "ok");
+        } catch (err) {
+          setStatus("Run failed", "bad");
+          $("traceOut").textContent = String(err);
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      $("runBtn").addEventListener("click", runCase);
+      loadCases().catch((err) => setStatus(String(err), "bad"));
+    </script>
+  </body>
+</html>

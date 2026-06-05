@@ -1,0 +1,14 @@
+.git/
+.pytest_cache/
+.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+**/*.pyc
+.env
+*.local
+agents/evidence/
+eval/outputs/
+grounding/pdq_raw/
+triple_consensus_logs/
+vertex_check/evidence/

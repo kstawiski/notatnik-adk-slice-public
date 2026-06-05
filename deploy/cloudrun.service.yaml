@@ -1,0 +1,40 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: notatnik-adk-slice
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "2"
+        run.googleapis.com/cpu-throttling: "true"
+    spec:
+      serviceAccountName: notatnik-adk-run@gen-lang-client-0384080704.iam.gserviceaccount.com
+      timeoutSeconds: 240
+      containerConcurrency: 4
+      containers:
+        # Template only. Replace through CI/CD if applying this YAML directly; the primary
+        # documented path is `gcloud run deploy` in deploy/README.md.
+        - image: IMAGE_URI_REPLACED_BY_DEPLOY
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MOCK_MODE
+              value: "true"
+            - name: GROUNDING_PDQ
+              value: "1"
+            - name: GOOGLE_GENAI_USE_VERTEXAI
+              value: "true"
+            - name: GOOGLE_CLOUD_PROJECT
+              value: gen-lang-client-0384080704
+            - name: GOOGLE_CLOUD_LOCATION
+              value: global
+            - name: RUN_TIMEOUT_SECONDS
+              value: "180"
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi

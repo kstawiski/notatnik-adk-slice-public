@@ -1,0 +1,670 @@
+{
+  "configs": {
+    "single_agent_baseline": {
+      "macro_composite": 0.8667,
+      "per_dimension_llm": {
+        "diagnosis_present": 1.0,
+        "gap_flagged": 0.8333,
+        "no_fabricated_stage": 0.8333,
+        "contradiction_surfaced": 0.5,
+        "faithfulness": 0.8667,
+        "no_pii_leak": 0.8667
+      },
+      "rule_macro_composite": 0.8756,
+      "per_dimension_rule": {
+        "diagnosis_present": 1.0,
+        "gap_flagged": 0.6667,
+        "no_fabricated_stage": 0.8333,
+        "contradiction_surfaced": 0.5,
+        "faithfulness": 0.9333,
+        "no_pii_leak": 0.8667
+      },
+      "llm_vs_rule_mean_abs_diff": 0.0467,
+      "judge_mean": 0.8733,
+      "self_corrected_rate": 0.0,
+      "mean_run_to_run_stdev": 0.0,
+      "n_cases": 15,
+      "n_runs": 45,
+      "n_failed": 0
+    },
+    "single_agent_optimized": {
+      "macro_composite": 0.95,
+      "per_dimension_llm": {
+        "diagnosis_present": 1.0,
+        "gap_flagged": 1.0,
+        "no_fabricated_stage": 1.0,
+        "contradiction_surfaced": 0.5,
+        "faithfulness": 0.9333,
+        "no_pii_leak": 1.0
+      },
+      "rule_macro_composite": 0.95,
+      "per_dimension_rule": {
+        "diagnosis_present": 1.0,
+        "gap_flagged": 1.0,
+        "no_fabricated_stage": 1.0,
+        "contradiction_surfaced": 0.25,
+        "faithfulness": 1.0,
+        "no_pii_leak": 1.0
+      },
+      "llm_vs_rule_mean_abs_diff": 0.0333,
+      "judge_mean": 0.88,
+      "self_corrected_rate": 0.0,
+      "mean_run_to_run_stdev": 0.0,
+      "n_cases": 15,
+      "n_runs": 45,
+      "n_failed": 0
+    },
+    "multi_agent_baseline": {
+      "macro_composite": 0.8889,
+      "per_dimension_llm": {
+        "diagnosis_present": 1.0,
+        "gap_flagged": 0.8333,
+        "no_fabricated_stage": 0.8333,
+        "contradiction_surfaced": 0.5,
+        "faithfulness": 0.8667,
+        "no_pii_leak": 0.9333
+      },
+      "rule_macro_composite": 0.8978,
+      "per_dimension_rule": {
+        "diagnosis_present": 1.0,
+        "gap_flagged": 0.6667,
+        "no_fabricated_stage": 0.8333,
+        "contradiction_surfaced": 0.5,
+        "faithfulness": 0.9333,
+        "no_pii_leak": 0.9333
+      },
+      "llm_vs_rule_mean_abs_diff": 0.0467,
+      "judge_mean": 0.8733,
+      "self_corrected_rate": 0.0,
+      "mean_run_to_run_stdev": 0.0,
+      "n_cases": 15,
+      "n_runs": 45,
+      "n_failed": 0
+    },
+    "multi_agent_optimized": {
+      "macro_composite": 0.9778,
+      "per_dimension_llm": {
+        "diagnosis_present": 1.0,
+        "gap_flagged": 1.0,
+        "no_fabricated_stage": 1.0,
+        "contradiction_surfaced": 1.0,
+        "faithfulness": 1.0,
+        "no_pii_leak": 0.9333
+      },
+      "rule_macro_composite": 0.9611,
+      "per_dimension_rule": {
+        "diagnosis_present": 1.0,
+        "gap_flagged": 1.0,
+        "no_fabricated_stage": 1.0,
+        "contradiction_surfaced": 0.75,
+        "faithfulness": 1.0,
+        "no_pii_leak": 0.9333
+      },
+      "llm_vs_rule_mean_abs_diff": 0.0167,
+      "judge_mean": 0.9067,
+      "self_corrected_rate": 0.2,
+      "mean_run_to_run_stdev": 0.0,
+      "n_cases": 15,
+      "n_runs": 45,
+      "n_failed": 0
+    }
+  },
+  "deltas": {
+    "qc_loop_at_baseline_all": {
+      "a": 0.8889,
+      "b": 0.8667,
+      "delta": 0.0222,
+      "n_paired": 15,
+      "improved": 1,
+      "regressed": 0,
+      "tied": 14
+    },
+    "qc_loop_at_optimized_all": {
+      "a": 0.9778,
+      "b": 0.95,
+      "delta": 0.0278,
+      "n_paired": 15,
+      "improved": 2,
+      "regressed": 1,
+      "tied": 12
+    },
+    "qc_loop_at_optimized_TEST": {
+      "a": 0.9583,
+      "b": 1.0,
+      "delta": -0.0417,
+      "n_paired": 8,
+      "improved": 0,
+      "regressed": 1,
+      "tied": 7
+    },
+    "prompt_opt_for_multi_TEST": {
+      "a": 0.9583,
+      "b": 0.8854,
+      "delta": 0.0729,
+      "n_paired": 8,
+      "improved": 2,
+      "regressed": 0,
+      "tied": 6
+    },
+    "prompt_opt_for_single_TEST": {
+      "a": 1.0,
+      "b": 0.8854,
+      "delta": 0.1146,
+      "n_paired": 8,
+      "improved": 2,
+      "regressed": 0,
+      "tied": 6
+    },
+    "prompt_opt_for_single_all": {
+      "a": 0.95,
+      "b": 0.8667,
+      "delta": 0.0833,
+      "n_paired": 15,
+      "improved": 3,
+      "regressed": 0,
+      "tied": 12
+    },
+    "combined_worst_to_best_TEST": {
+      "a": 0.9583,
+      "b": 0.8854,
+      "delta": 0.0729,
+      "n_paired": 8,
+      "improved": 2,
+      "regressed": 0,
+      "tied": 6
+    },
+    "combined_worst_to_best_all": {
+      "a": 0.9778,
+      "b": 0.8667,
+      "delta": 0.1111,
+      "n_paired": 15,
+      "improved": 5,
+      "regressed": 0,
+      "tied": 10
+    }
+  },
+  "deltas_rule": {
+    "qc_loop_at_baseline_all": {
+      "a": 0.8978,
+      "b": 0.8756,
+      "delta": 0.0222,
+      "n_paired": 15,
+      "improved": 1,
+      "regressed": 0,
+      "tied": 14
+    },
+    "qc_loop_at_optimized_all": {
+      "a": 0.9611,
+      "b": 0.95,
+      "delta": 0.0111,
+      "n_paired": 15,
+      "improved": 2,
+      "regressed": 1,
+      "tied": 12
+    },
+    "qc_loop_at_optimized_TEST": {
+      "a": 0.9271,
+      "b": 0.9688,
+      "delta": -0.0417,
+      "n_paired": 8,
+      "improved": 0,
+      "regressed": 1,
+      "tied": 7
+    },
+    "prompt_opt_for_multi_TEST": {
+      "a": 0.9271,
+      "b": 0.8708,
+      "delta": 0.0562,
+      "n_paired": 8,
+      "improved": 2,
+      "regressed": 1,
+      "tied": 5
+    },
+    "prompt_opt_for_single_TEST": {
+      "a": 0.9688,
+      "b": 0.8708,
+      "delta": 0.0979,
+      "n_paired": 8,
+      "improved": 3,
+      "regressed": 1,
+      "tied": 4
+    },
+    "prompt_opt_for_single_all": {
+      "a": 0.95,
+      "b": 0.8756,
+      "delta": 0.0744,
+      "n_paired": 15,
+      "improved": 4,
+      "regressed": 1,
+      "tied": 10
+    },
+    "combined_worst_to_best_TEST": {
+      "a": 0.9271,
+      "b": 0.8708,
+      "delta": 0.0562,
+      "n_paired": 8,
+      "improved": 2,
+      "regressed": 1,
+      "tied": 5
+    },
+    "combined_worst_to_best_all": {
+      "a": 0.9611,
+      "b": 0.8756,
+      "delta": 0.0856,
+      "n_paired": 15,
+      "improved": 5,
+      "regressed": 1,
+      "tied": 9
+    }
+  },
+  "deltas_judge": {
+    "qc_loop_at_baseline_all": {
+      "a": 0.8733,
+      "b": 0.8733,
+      "delta": 0.0,
+      "n_paired": 15,
+      "improved": 0,
+      "regressed": 0,
+      "tied": 15
+    },
+    "qc_loop_at_optimized_all": {
+      "a": 0.9067,
+      "b": 0.88,
+      "delta": 0.0267,
+      "n_paired": 15,
+      "improved": 1,
+      "regressed": 0,
+      "tied": 14
+    },
+    "qc_loop_at_optimized_TEST": {
+      "a": 0.875,
+      "b": 0.875,
+      "delta": 0.0,
+      "n_paired": 8,
+      "improved": 0,
+      "regressed": 0,
+      "tied": 8
+    },
+    "prompt_opt_for_multi_TEST": {
+      "a": 0.875,
+      "b": 0.9125,
+      "delta": -0.0375,
+      "n_paired": 8,
+      "improved": 0,
+      "regressed": 2,
+      "tied": 6
+    },
+    "prompt_opt_for_single_TEST": {
+      "a": 0.875,
+      "b": 0.9125,
+      "delta": -0.0375,
+      "n_paired": 8,
+      "improved": 0,
+      "regressed": 2,
+      "tied": 6
+    },
+    "prompt_opt_for_single_all": {
+      "a": 0.88,
+      "b": 0.8733,
+      "delta": 0.0067,
+      "n_paired": 15,
+      "improved": 2,
+      "regressed": 2,
+      "tied": 11
+    },
+    "combined_worst_to_best_TEST": {
+      "a": 0.875,
+      "b": 0.9125,
+      "delta": -0.0375,
+      "n_paired": 8,
+      "improved": 0,
+      "regressed": 2,
+      "tied": 6
+    },
+    "combined_worst_to_best_all": {
+      "a": 0.9067,
+      "b": 0.8733,
+      "delta": 0.0333,
+      "n_paired": 15,
+      "improved": 3,
+      "regressed": 2,
+      "tied": 10
+    }
+  },
+  "per_category": {
+    "clean": {
+      "n_cases": 4,
+      "macro_composite": {
+        "single_agent_baseline": 1.0,
+        "single_agent_optimized": 1.0,
+        "multi_agent_baseline": 1.0,
+        "multi_agent_optimized": 1.0
+      },
+      "rule_macro_composite": {
+        "single_agent_baseline": 1.0,
+        "single_agent_optimized": 1.0,
+        "multi_agent_baseline": 1.0,
+        "multi_agent_optimized": 1.0
+      },
+      "qc_loop_optimized": {
+        "a": 1.0,
+        "b": 1.0,
+        "delta": 0.0,
+        "n_paired": 4,
+        "improved": 0,
+        "regressed": 0,
+        "tied": 4
+      },
+      "qc_loop_baseline": {
+        "a": 1.0,
+        "b": 1.0,
+        "delta": 0.0,
+        "n_paired": 4,
+        "improved": 0,
+        "regressed": 0,
+        "tied": 4
+      },
+      "combined_worst_to_best": {
+        "a": 1.0,
+        "b": 1.0,
+        "delta": 0.0,
+        "n_paired": 4,
+        "improved": 0,
+        "regressed": 0,
+        "tied": 4
+      },
+      "n_failed": {
+        "single_agent_baseline": 0,
+        "single_agent_optimized": 0,
+        "multi_agent_baseline": 0,
+        "multi_agent_optimized": 0
+      }
+    },
+    "contradiction": {
+      "n_cases": 4,
+      "macro_composite": {
+        "single_agent_baseline": 0.7083,
+        "single_agent_optimized": 0.8125,
+        "multi_agent_baseline": 0.7083,
+        "multi_agent_optimized": 1.0
+      },
+      "rule_macro_composite": {
+        "single_agent_baseline": 0.75,
+        "single_agent_optimized": 0.8125,
+        "multi_agent_baseline": 0.75,
+        "multi_agent_optimized": 0.9375
+      },
+      "qc_loop_optimized": {
+        "a": 1.0,
+        "b": 0.8125,
+        "delta": 0.1875,
+        "n_paired": 4,
+        "improved": 2,
+        "regressed": 0,
+        "tied": 2
+      },
+      "qc_loop_baseline": {
+        "a": 0.7083,
+        "b": 0.7083,
+        "delta": 0.0,
+        "n_paired": 4,
+        "improved": 0,
+        "regressed": 0,
+        "tied": 4
+      },
+      "combined_worst_to_best": {
+        "a": 1.0,
+        "b": 0.7083,
+        "delta": 0.2917,
+        "n_paired": 4,
+        "improved": 3,
+        "regressed": 0,
+        "tied": 1
+      },
+      "n_failed": {
+        "single_agent_baseline": 0,
+        "single_agent_optimized": 0,
+        "multi_agent_baseline": 0,
+        "multi_agent_optimized": 0
+      }
+    },
+    "faithfulness": {
+      "n_cases": 1,
+      "macro_composite": {
+        "single_agent_baseline": 1.0,
+        "single_agent_optimized": 1.0,
+        "multi_agent_baseline": 1.0,
+        "multi_agent_optimized": 1.0
+      },
+      "rule_macro_composite": {
+        "single_agent_baseline": 0.8,
+        "single_agent_optimized": 1.0,
+        "multi_agent_baseline": 0.8,
+        "multi_agent_optimized": 1.0
+      },
+      "qc_loop_optimized": {
+        "a": 1.0,
+        "b": 1.0,
+        "delta": 0.0,
+        "n_paired": 1,
+        "improved": 0,
+        "regressed": 0,
+        "tied": 1
+      },
+      "qc_loop_baseline": {
+        "a": 1.0,
+        "b": 1.0,
+        "delta": 0.0,
+        "n_paired": 1,
+        "improved": 0,
+        "regressed": 0,
+        "tied": 1
+      },
+      "combined_worst_to_best": {
+        "a": 1.0,
+        "b": 1.0,
+        "delta": 0.0,
+        "n_paired": 1,
+        "improved": 0,
+        "regressed": 0,
+        "tied": 1
+      },
+      "n_failed": {
+        "single_agent_baseline": 0,
+        "single_agent_optimized": 0,
+        "multi_agent_baseline": 0,
+        "multi_agent_optimized": 0
+      }
+    },
+    "missing_tnm": {
+      "n_cases": 4,
+      "macro_composite": {
+        "single_agent_baseline": 1.0,
+        "single_agent_optimized": 1.0,
+        "multi_agent_baseline": 1.0,
+        "multi_agent_optimized": 1.0
+      },
+      "rule_macro_composite": {
+        "single_agent_baseline": 1.0,
+        "single_agent_optimized": 1.0,
+        "multi_agent_baseline": 1.0,
+        "multi_agent_optimized": 1.0
+      },
+      "qc_loop_optimized": {
+        "a": 1.0,
+        "b": 1.0,
+        "delta": 0.0,
+        "n_paired": 4,
+        "improved": 0,
+        "regressed": 0,
+        "tied": 4
+      },
+      "qc_loop_baseline": {
+        "a": 1.0,
+        "b": 1.0,
+        "delta": 0.0,
+        "n_paired": 4,
+        "improved": 0,
+        "regressed": 0,
+        "tied": 4
+      },
+      "combined_worst_to_best": {
+        "a": 1.0,
+        "b": 1.0,
+        "delta": 0.0,
+        "n_paired": 4,
+        "improved": 0,
+        "regressed": 0,
+        "tied": 4
+      },
+      "n_failed": {
+        "single_agent_baseline": 0,
+        "single_agent_optimized": 0,
+        "multi_agent_baseline": 0,
+        "multi_agent_optimized": 0
+      }
+    },
+    "pii_leak": {
+      "n_cases": 2,
+      "macro_composite": {
+        "single_agent_baseline": 0.5834,
+        "single_agent_optimized": 1.0,
+        "multi_agent_baseline": 0.75,
+        "multi_agent_optimized": 0.8334
+      },
+      "rule_macro_composite": {
+        "single_agent_baseline": 0.6667,
+        "single_agent_optimized": 1.0,
+        "multi_agent_baseline": 0.8334,
+        "multi_agent_optimized": 0.8334
+      },
+      "qc_loop_optimized": {
+        "a": 0.8334,
+        "b": 1.0,
+        "delta": -0.1666,
+        "n_paired": 2,
+        "improved": 0,
+        "regressed": 1,
+        "tied": 1
+      },
+      "qc_loop_baseline": {
+        "a": 0.75,
+        "b": 0.5834,
+        "delta": 0.1666,
+        "n_paired": 2,
+        "improved": 1,
+        "regressed": 0,
+        "tied": 1
+      },
+      "combined_worst_to_best": {
+        "a": 0.8334,
+        "b": 0.5834,
+        "delta": 0.25,
+        "n_paired": 2,
+        "improved": 2,
+        "regressed": 0,
+        "tied": 0
+      },
+      "n_failed": {
+        "single_agent_baseline": 0,
+        "single_agent_optimized": 0,
+        "multi_agent_baseline": 0,
+        "multi_agent_optimized": 0
+      }
+    }
+  },
+  "delta_notes": {
+    "metric": "PRIMARY = gold-grounded LLM grader composite (eval/llm_grader.py). deltas_rule is the deterministic cross-check and deltas_judge the holistic-judge triangulation, computed on the SAME paired contrasts so the cross-check covers the actual claims.",
+    "pairing": "each delta uses cases with a valid score (for that metric) in BOTH configs (n_paired). Pairing removes denominator-mismatch bias; it does NOT remove informative-missingness bias, so if failures concentrate in a weaker config a contrast is conservatively biased toward null \u2014 n_failed is reported per config (and per category) to make this visible.",
+    "held_out": "augmentations are selected on TRAIN by the deterministic composite; *_TEST deltas are the held-out generalization. *_all deltas include TRAIN (in-sample) \u2014 supplementary.",
+    "optimizer_objective": "the optimizer selects on the MULTI-agent composite; the single-agent prompt deltas are a TRANSFER of those prompts to the single agent, not a single-agent-native optimization.",
+    "shared_vocabulary_caveat": "the optimized prompt injects the literal markers '[DATA GAP]' and 'surface BOTH values' that the grader rubric and rule scorer also key on; deltas_judge (less marker-bound) is reported to show the gain is not merely speaking the grader's language.",
+    "test_cases": [
+      "E-CLN-02",
+      "E-CLN-04",
+      "E-CON-02",
+      "E-CON-04",
+      "E-FTH-01",
+      "E-GAP-02",
+      "E-GAP-04",
+      "E-PII-02"
+    ]
+  },
+  "meta": {
+    "utc": "20260604T170107Z",
+    "runs_per_case": 3,
+    "n_cases": 15,
+    "train": [
+      "E-CLN-01",
+      "E-CLN-03",
+      "E-CON-01",
+      "E-CON-03",
+      "E-GAP-01",
+      "E-GAP-03",
+      "E-PII-01"
+    ],
+    "test": [
+      "E-CLN-02",
+      "E-CLN-04",
+      "E-CON-02",
+      "E-CON-04",
+      "E-FTH-01",
+      "E-GAP-02",
+      "E-GAP-04",
+      "E-PII-02"
+    ],
+    "optimizer": {
+      "baseline_train_composite": 0.9286,
+      "optimized_train_composite": 1.0,
+      "selected": [
+        "data_gap",
+        "discrepancy"
+      ],
+      "rounds": [
+        {
+          "with": [
+            "data_gap"
+          ],
+          "composite": 0.9643,
+          "candidates": {
+            "data_gap": 0.9643,
+            "discrepancy": 0.9524,
+            "no_fabricate": 0.9286,
+            "exit_discipline": 0.9167
+          }
+        },
+        {
+          "with": [
+            "data_gap",
+            "discrepancy"
+          ],
+          "composite": 1.0,
+          "candidates": {
+            "discrepancy": 1.0,
+            "no_fabricate": 0.9643,
+            "exit_discipline": 0.9357
+          }
+        },
+        {
+          "with": [
+            "data_gap",
+            "discrepancy",
+            "no_fabricate"
+          ],
+          "composite": 1.0,
+          "candidates": {
+            "no_fabricate": 1.0,
+            "exit_discipline": 1.0
+          }
+        }
+      ],
+      "method": "scripted forward-greedy instruction-tuning on held-in train split"
+    },
+    "failed_scores": 0,
+    "model": "gemini-3.1-flash-lite (pinned)",
+    "temperature": 0,
+    "primary_metric": "gold-grounded LLM grader composite (eval/llm_grader.py)",
+    "cross_check_metric": "deterministic rule composite (eval/scorers.py)",
+    "no_significance_claim": "n=15 cases; descriptive reliability profile only"
+  }
+}

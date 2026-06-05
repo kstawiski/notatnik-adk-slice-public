@@ -1,0 +1,9 @@
+run_dir: eval/outputs/20260604T170107Z_full_v2
+runs: 180 | (config,case) groups: 60
+judge gaps (transient 429 -> None): 12/180 (6.7%) by config: {'single_agent_baseline': 1, 'single_agent_optimized': 5, 'multi_agent_baseline': 6}
+
+P1 DETERMINISM  (drafts identical across runs per group): PASS
+P2 AGREEMENT    (surviving judge values agree within each group): PASS
+P3 NO-DROP      (no group lost ALL judge values): PASS
+
+VERDICT: PASS — the 12 judge gap(s) are score-preserving; judge means/deltas are identical to a zero-gap run (P1&P2&P3). The claim-bearing layers (agent runs, primary grader, rule cross-check) had no gaps.
