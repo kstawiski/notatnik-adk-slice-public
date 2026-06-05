@@ -1,4 +1,4 @@
-# Devpost Write-Up Draft
+# Devpost Write-Up
 
 ## Project Title
 
