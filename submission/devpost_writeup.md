@@ -27,10 +27,9 @@ Use these testing links:
 
 - Demo URL: https://notatnik-adk-slice-6fjc6wlk6a-ew.a.run.app
 - Source code repository: https://github.com/kstawiski/notatnik-adk-slice-public
-- Backup code package: https://chmura.radioonkolog.pl/s/NxrPJSQrceQtm2L
-- Direct package download: https://chmura.radioonkolog.pl/s/NxrPJSQrceQtm2L/download
-- Video URL: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k
-- Direct video download: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k/download
+- Backup code package: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d
+- Direct package download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download
+- Video URL: https://www.youtube.com/watch?v=b_SkfPokvCA
 
 The public Cloud Run service was smoke-tested on 2026-06-05 with `/health`, `/cases`, first-screen CASE-003 source preview, and `CASE-003` (`include_evidence=false`). The read-only pages are public; the Vertex-backed `/run` action should use the testing access token supplied in Devpost notes to control spend. Do not paste local service URLs into Devpost.
 
@@ -137,5 +136,5 @@ The optimization story is also deliberately honest: the submitted project does n
 - Theme/Track: Optimize
 - Status: Challenge submission package
 - Testing access URL: https://notatnik-adk-slice-6fjc6wlk6a-ew.a.run.app/?token=<paste-token-from-Devpost-notes>
-- Video URL: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k
+- Video URL: https://www.youtube.com/watch?v=b_SkfPokvCA
 - Code URL: https://github.com/kstawiski/notatnik-adk-slice-public
