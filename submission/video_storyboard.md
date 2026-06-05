@@ -96,7 +96,7 @@ Screen:
 
 - Switch to browser tab showing `business_one_pager.md`.
 - Focus on the ROI table (hours released and value).
-- End on slide displaying the demo and code URLs.
+- End on slide displaying the demo URL and GitHub code URL: `https://github.com/kstawiski/notatnik-adk-slice-public`.
 
 ## Recording Checklist
 

@@ -1,6 +1,6 @@
 # Final Submission Checklist
 
-Do not submit until every blocker is closed.
+All package blockers are closed as of the latest QA pass. The final Devpost form review and Submit click are the remaining user-gated external actions.
 
 ## Required Artifacts
 
@@ -9,24 +9,25 @@ Devpost-required asset fields observed on the project edit page: `Video*`, `Code
 | ID | Artifact | Status | Evidence / next action |
 |---|---|---|---|
 | A1 | Public Cloud Run demo URL | READY | https://notatnik-adk-slice-307066208186.europe-west1.run.app. Live smoke on 2026-06-05: `/health` OK, `/cases` has 18 cases and pre-run CASE-003 source preview, `CASE-003` QC PASS/self-corrected/generated scrub PASS with `[DISCREPANCY] cT2 N0 vs cT3 N1`. |
-| A2 | 1-2 min video | LOCAL TAKE READY / UPLOAD TODO | `video_storyboard.md` is ready. Chrome browser-flow take was recorded and visually sampled; upload/paste final video URL after narration/subtitles decision. |
+| A2 | 1-2 min video | READY | Captioned Chrome browser-flow take uploaded: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k. Direct download: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k/download. |
 | A3 | Architecture diagram | READY | `architecture.svg`, `architecture.mmd`. |
-| A4 | Public/judge-accessible code URL | READY | Code folder URL: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d; direct download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download. Code package QA: one root commit, no raw eval trace, no raw `agents/evidence/`, strict secret/key scan clean, tests and Docker smoke green. |
-| A5 | Devpost write-up | DRAFT READY | `devpost_writeup.md`; demo and code URLs are filled; fill video URL after upload. |
+| A4 | Public/judge-accessible code URL | READY | Repository URL: https://github.com/kstawiski/notatnik-adk-slice-public. Backup code folder URL: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d; direct download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download. Code package QA: one root commit, no raw eval trace, no raw `agents/evidence/`, strict secret/key scan clean, tests and Docker smoke green. |
+| A5 | Devpost write-up | READY | `devpost_writeup.md`; demo, code, and video URLs are filled. |
 | A6 | Business one-pager | READY | `business_one_pager.md`. |
 | A7 | Reliability delta table | READY | `reliability_delta.md`; C4 reliability profile finalized. |
 | A8 | Auditable eval package | READY | `eval/` plus C4 report/output artifacts. |
 | A9 | Grounding corpus | READY | `grounding/` committed PDQ corpus/index; raw scraped pages excluded. |
 | A10 | Redacted trace/observability notes | READY | `trace_notes.md`; Chrome video test take and visual samples are available. |
-| A11 | Devpost metadata | TODO | Set Region=EMEA and Track=Optimize; final submitted status only after the Devpost Submit click. |
-| A12 | Organizer email/reply | TODO | Confirm if already sent; log reply if available. |
+| A11 | Devpost metadata | READY / FORM ACTION | Set Region=EMEA and Track=Optimize; final submitted status only after the Devpost Submit click. |
+| A12 | Organizer email/reply | CHECKED BY USER | User reported on 2026-06-05 that the deadline/admission timing is OK. No package edit remains. |
 
-## Hard Blockers Before Public Submission
+## Remaining User-Gated External Actions
 
-1. Video uploaded and URL pasted into Devpost.
-2. Devpost final fields completed and Submit clicked.
+1. Paste the final Devpost fields from `devpost_writeup.md`.
+2. Verify the Devpost preview one last time.
+3. Click Submit.
 
-Code access is available as a public folder share. If Devpost rejects a folder/share link and requires a repository-style URL, create a public remote from `adk-slice-public/` and replace the code URL before final submission.
+The package now provides both a standard repository URL and a backup folder/direct-download URL.
 
 ## Completed Work
 

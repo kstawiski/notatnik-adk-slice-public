@@ -6,6 +6,8 @@ Notatnik Medyczny targets a narrow but expensive workflow: oncology documentatio
 
 Product status: Notatnik Medyczny has a public product site at https://notatnikmedyczny.pl. This challenge submission isolates a judgeable, synthetic ADK reliability layer from the private production product.
 
+Validation status: the challenge artifact is a public reliability slice, not a clinical outcomes claim. The next external milestone is a physician-design-partner pilot that measures minutes saved per documentation-heavy oncology encounter, contradiction/gap capture rate, generated-output scrub findings, and post-review edit burden.
+
 ## Beachhead
 
 Initial wedge:
@@ -56,8 +58,9 @@ The pricing implication is straightforward: even a modest per-clinician subscrip
 ## Go-To-Market
 
 1. Founder-led design partner: the founder's oncology/radiotherapy practice workflow.
-2. Polish oncology practices and clinics with documentation-heavy workflows.
-3. EMEA oncology centers that need documentation efficiency without autonomous clinical decision-making.
+2. First external design-partner pilot: run in physician-review mode, with synthetic/public demo separated from any private clinical data and with a GDPR/DPIA review before processing real patient material.
+3. Polish oncology practices and clinics with documentation-heavy workflows.
+4. EMEA oncology centers that need documentation efficiency without autonomous clinical decision-making.
 
 ## What Judges Should Remember
 

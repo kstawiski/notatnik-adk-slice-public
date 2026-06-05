@@ -92,7 +92,8 @@ The business wedge is radiation oncology documentation: save repetitive note tim
 After public deploy, end on a clean screen or slide with:
 
 - Demo URL: `https://notatnik-adk-slice-307066208186.europe-west1.run.app`
-- Code URL: `https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d`
+- Code URL: `https://github.com/kstawiski/notatnik-adk-slice-public`
+- Backup code package: `https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d`
 - Data note: synthetic cases only; no real PHI
 
 Do not include local file paths or local service URLs in the final uploaded video.

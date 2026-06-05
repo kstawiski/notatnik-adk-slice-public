@@ -9,12 +9,14 @@ Status as of 2026-06-05:
 - Entrant: Radioonkolog.pl / Konrad Stawiski
 - Public demo: Cloud Run is live at https://notatnik-adk-slice-307066208186.europe-west1.run.app.
   Live smoke is green for `/health`, `/cases`, first-screen CASE-003 source preview, and `CASE-003` with evidence off.
-- Code: public/judge-accessible folder ready at https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d.
+- Code: public/judge-accessible repository ready at https://github.com/kstawiski/notatnik-adk-slice-public.
+  Backup folder: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d.
   Direct download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download.
   Export QA is green: one root commit, raw traces absent, strict secret/key scan clean, tests
   and Docker/container smoke passed.
-- Video: storyboard is ready; a Chrome browser-flow test take was recorded and visually sampled, but final upload/subtitles-or-narration decision and Devpost video URL still need to happen.
-- Devpost: write-up draft is ready with demo/code URLs filled; video URL and Submit click remain.
+- Video: captioned Chrome browser-flow take is uploaded at https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k.
+  Direct download: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k/download.
+- Devpost: write-up draft is ready with demo/code/video URLs filled; final form review and Submit click remain.
 
 Artifacts:
 

@@ -9,6 +9,10 @@ The service is self-contained:
 - Gemini reasoning uses Vertex AI through `agents.model.build_gemini()`.
 - Runtime service account: `notatnik-adk-run@gen-lang-client-0384080704.iam.gserviceaccount.com`.
 
+ADK maintenance note: the deployed challenge artifact keeps the tested `SequentialAgent` /
+`LoopAgent` orchestration. If a future ADK Workflow API supersedes those classes, migrate
+the orchestration layer after the challenge without changing the C4/C6 reliability claims.
+
 Build locally:
 
 ```bash

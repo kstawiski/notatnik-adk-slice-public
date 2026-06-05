@@ -49,6 +49,11 @@ C4 found that the QC loop can re-introduce identifiers on one held-out synthetic
 C6 keeps that measurement intact and adds the indicated mitigation: the Cloud Run API/UI
 post-scrubs generated text and exposes a generated-output scrub PASS/HOLD flag.
 
+Maintenance note: this public slice intentionally keeps the tested ADK `SequentialAgent` /
+`LoopAgent` implementation used for the challenge. If future ADK releases replace these
+classes with a newer Workflow API, migrate the orchestration layer without changing the
+synthetic evaluation claims.
+
 ## Judge Quick Checks
 
 - One-command local demo: `python3 run_demo.py --case CASE-003 --write-trace`.

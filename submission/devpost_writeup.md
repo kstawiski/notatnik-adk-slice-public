@@ -8,6 +8,8 @@ Notatnik Medyczny: ADK Reliability Slice for Oncology Documentation
 
 A physician-in-the-loop oncology documentation agent that uses ADK sub-agents, Gemini on Vertex AI, MCP tools, and deterministic safety checks to measure and improve source-grounded reliability on synthetic cases before clinical use.
 
+Held-out prompt optimization improved source-grounded reliability by +0.115, and the live demo shows a rectal-cancer staging conflict surfaced as `[DISCREPANCY] cT2 N0 vs cT3 N1` rather than silently resolved.
+
 ## Track / Region / Entrant
 
 - Track: Optimize
@@ -17,16 +19,18 @@ A physician-in-the-loop oncology documentation agent that uses ADK sub-agents, G
 
 Why Track 2: this is not a net-new chatbot. It is a contest-period hardening slice for an existing oncology documentation product, focused on making failure modes measurable and auditable.
 
-Key optimization result: prompt optimization improved held-out source-grounded reliability by +0.115, while multi-agent QC exposed targeted contradictions but also revealed a synthetic PII regression mitigated by deterministic output scrubbing.
+Key optimization result: prompt optimization improved held-out source-grounded reliability by +0.115, while multi-agent QC exposed targeted contradictions but also revealed a synthetic PII regression mitigated by deterministic output scrubbing. The write-up is structured around the published judging weights: technical implementation, business case, innovation/creativity, and demo/presentation.
 
 ## Testing Access
 
 Use these testing links:
 
 - Demo URL: https://notatnik-adk-slice-307066208186.europe-west1.run.app
-- Source code folder: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d
+- Source code repository: https://github.com/kstawiski/notatnik-adk-slice-public
+- Backup code folder: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d
 - Direct code download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download
-- Video URL: `PASTE_VIDEO_URL`
+- Video URL: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k
+- Direct video download: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k/download
 
 The public Cloud Run service was smoke-tested on 2026-06-05 with `/health`, `/cases`, first-screen CASE-003 source preview, and `CASE-003` (`include_evidence=false`). Do not paste local service URLs into Devpost.
 
@@ -58,6 +62,8 @@ The default demo case (`CASE-003`) is a rectal-cancer staging conflict. The agen
 - Grounding: committed public NCI PDQ treatment-summary corpus and embedding index for local guideline retrieval; the demo does not depend on a private database, private search service, or production Notatnik runtime.
 
 Track 2 optimization mapping: the synthetic oncology fixtures act as the agent-simulation layer, the held-out C4 harness is the agent-evaluation layer, and the structured `CaseRun` trace (`doc_drafts`, `qc_rejections`, `qc_passed`, tool calls, and scrub status) is the public observability layer. We kept these pieces self-contained to preserve clinical IP isolation, deterministic temperature-0 reproducibility, and gold-grounded grading for oncology documentation failures.
+
+Platform-scope note: for the challenge artifact, we used ADK, Gemini via Vertex AI, MCP, Cloud Run, and a self-contained synthetic simulation/evaluation/trace harness. We describe those pieces as the Track 2 simulation, evaluation, and observability layers rather than claiming use of branded Agent Simulation, Agent Evaluation, Agent Observability, Agent Runtime, Agent Engine, or Agent Optimizer services.
 
 ## Data Sources and Rights
 
@@ -95,6 +101,8 @@ The commercial hypothesis is not "replace clinicians." It is:
 - keep physicians in the approval loop;
 - sell into practices and oncology centers that already need GDPR-aware clinical documentation.
 
+The first external validation milestone is a physician-design-partner pilot measuring minutes saved per documentation-heavy oncology encounter, contradiction/gap capture rate, generated-output scrub findings, and post-review edit burden.
+
 See `business_one_pager.md` for the ROI scenario and source-backed demand drivers.
 
 ## Innovation
@@ -129,5 +137,5 @@ The optimization story is also deliberately honest: the submitted project does n
 - Theme/Track: Optimize
 - Status: Pending until Devpost Submit click
 - Testing access URL: https://notatnik-adk-slice-307066208186.europe-west1.run.app
-- Video URL: fill after upload
-- Code URL: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d
+- Video URL: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k
+- Code URL: https://github.com/kstawiski/notatnik-adk-slice-public
