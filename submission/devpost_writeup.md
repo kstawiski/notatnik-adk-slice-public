@@ -135,7 +135,7 @@ The optimization story is also deliberately honest: the submitted project does n
 
 - Region: EMEA
 - Theme/Track: Optimize
-- Status: Pending until Devpost Submit click
+- Status: Challenge submission package
 - Testing access URL: https://notatnik-adk-slice-307066208186.europe-west1.run.app
 - Video URL: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k
 - Code URL: https://github.com/kstawiski/notatnik-adk-slice-public

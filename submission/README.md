@@ -1,6 +1,6 @@
-# Submission Package
+# Submission Support Materials
 
-Working package for the Google for Startups AI Agents Challenge submission.
+Public support materials for the Google for Startups AI Agents Challenge submission.
 
 Status as of 2026-06-05:
 
@@ -16,16 +16,12 @@ Status as of 2026-06-05:
   and Docker/container smoke passed.
 - Video: captioned Chrome browser-flow take is uploaded at https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k.
   Direct download: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k/download.
-- Devpost: write-up draft is ready with demo/code/video URLs filled; final form review and Submit click remain.
+- Devpost: write-up is provided for transparency with demo/code/video URLs filled.
 
 Artifacts:
 
 - `devpost_writeup.md` - Devpost text fields and final paste-ready narrative.
 - `business_one_pager.md` - business case and ROI model.
-- `reliability_delta.md` - reviewed C4 result narrative and tables to paste into Devpost/video.
+- `reliability_delta.md` - reviewed C4 result narrative and tables.
 - `architecture.svg` and `architecture.mmd` - architecture diagram assets.
-- `video_storyboard.md` - 1-2 minute demo video script and shot list.
-- `trace_notes.md` - redacted trace/observability notes for screenshots or Devpost.
-- `final_checklist.md` - submission status, blockers, and approval-gated actions.
-
-Do not submit until `final_checklist.md` has no open blocker rows.
+- `trace_notes.md` - redacted trace/observability notes for screenshots or review.
