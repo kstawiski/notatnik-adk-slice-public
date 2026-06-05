@@ -33,37 +33,67 @@
       header {
         border-bottom: 1px solid var(--line);
         background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 8px 24px rgba(23, 32, 29, 0.04);
       }
       .wrap {
         width: min(1180px, calc(100% - 32px));
         margin: 0 auto;
       }
       .top {
-        min-height: 86px;
-        display: flex;
+        min-height: 112px;
+        display: grid;
+        grid-template-columns: minmax(280px, 0.78fr) minmax(560px, 1.22fr);
         align-items: center;
         justify-content: space-between;
-        gap: 18px;
+        gap: 24px;
+        padding: 14px 0;
+      }
+      .brand-kicker {
+        color: var(--teal-dark);
+        font-size: 12px;
+        font-weight: 760;
+        letter-spacing: 0;
+        margin-bottom: 5px;
+        text-transform: uppercase;
       }
       h1 {
         margin: 0;
-        font-size: 24px;
-        line-height: 1.14;
-        font-weight: 760;
+        font-size: 30px;
+        line-height: 1.05;
+        font-weight: 800;
         letter-spacing: 0;
       }
       .sub {
         color: var(--muted);
         font-size: 13px;
-        margin-top: 6px;
-        max-width: 560px;
+        line-height: 1.35;
+        margin-top: 7px;
+        max-width: 620px;
+      }
+      .sub b { color: var(--ink); }
+      .brand, .controls, .field {
+        min-width: 0;
       }
       .controls {
-        display: flex;
+        display: grid;
+        grid-template-columns: minmax(280px, 1fr) auto minmax(136px, auto);
         align-items: center;
         gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
+        justify-content: stretch;
+        background: #fbfcfb;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        padding: 10px;
+      }
+      .field {
+        display: grid;
+        gap: 4px;
+      }
+      .field > span {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1;
       }
       select, button {
         height: 40px;
@@ -75,17 +105,20 @@
         font-size: 14px;
       }
       select {
-        min-width: 360px;
+        min-width: 0;
+        width: 100%;
         padding: 0 34px 0 10px;
       }
       button {
         border-color: var(--teal-dark);
         background: var(--teal);
         color: white;
+        min-width: 136px;
         padding: 0 16px;
         font-weight: 740;
         cursor: pointer;
         box-shadow: 0 8px 16px rgba(15, 118, 110, 0.18);
+        white-space: nowrap;
       }
       button:hover { background: var(--teal-dark); }
       button:disabled {
@@ -104,6 +137,7 @@
         color: var(--muted);
         font-size: 13px;
         white-space: nowrap;
+        align-self: end;
       }
       .toggle input {
         width: 16px;
@@ -374,7 +408,10 @@
       #status {
         color: var(--muted);
         font-size: 13px;
-        min-width: 180px;
+        min-width: 116px;
+        align-self: end;
+        grid-column: 1 / -1;
+        justify-self: end;
       }
       @keyframes railMove {
         from { background-position: 0 0; }
@@ -388,9 +425,9 @@
         .flow-step.active::after, .working::before { animation: none; }
       }
       @media (max-width: 980px) {
-        .top { align-items: flex-start; flex-direction: column; padding: 16px 0; }
-        .controls { justify-content: flex-start; width: 100%; }
-        select { min-width: 0; width: min(100%, 420px); }
+        .top { align-items: stretch; grid-template-columns: 1fr; padding: 16px 0; }
+        .controls { grid-template-columns: 1fr; width: 100%; }
+        select { min-width: 0; width: 100%; }
         .guide { grid-template-columns: 1fr; }
         .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .grid { grid-template-columns: 1fr; }
@@ -407,15 +444,19 @@
   <body>
     <header>
       <div class="wrap top">
-        <div>
-          <h1>Notatnik Medyczny ADK Reliability Slice</h1>
-          <div class="sub">A synthetic oncology case moves from source documents through an ADK documentation/QC loop into a scrubbed, source-grounded note.</div>
+        <div class="brand">
+          <div class="brand-kicker">Track 2 Optimize / synthetic cases only</div>
+          <h1>Notatnik Medyczny</h1>
+          <div class="sub"><b>ADK Reliability Slice.</b> Source documents move through a documentation/QC loop into a scrubbed, source-grounded oncology note.</div>
         </div>
-        <div class="controls">
-          <select id="caseSelect" aria-label="Synthetic case"></select>
+        <div class="controls" aria-label="Run controls">
+          <label class="field">
+            <span>Synthetic case</span>
+            <select id="caseSelect" aria-label="Synthetic case"></select>
+          </label>
           <label class="toggle">
             <input id="evidenceToggle" type="checkbox" />
-            Evidence retrieval
+            Evidence
           </label>
           <button id="runBtn" type="button">Run ADK loop</button>
           <span id="status">Loading cases...</span>
