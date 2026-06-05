@@ -8,8 +8,9 @@ The service is self-contained:
 - `GROUNDING_PDQ=1`: guideline retrieval uses the committed NCI PDQ embedding index.
 - Gemini reasoning uses Vertex AI through `agents.model.build_gemini()`.
 - Runtime service account: `notatnik-adk-run@gen-lang-client-0384080704.iam.gserviceaccount.com`.
-- The public `/run` endpoint should be protected with `RUN_ACCESS_TOKEN`; the home page,
-  `/health`, and `/cases` can remain public for judge inspection.
+- The public `/run` endpoint uses `RUN_ACCESS_TOKEN` for real Vertex-backed runs. The home page,
+  `/health`, and `/cases` remain public for judge inspection; visitors without a valid token get
+  a deterministic mock answer and do not call Vertex.
 
 ADK maintenance note: the deployed challenge artifact keeps the tested `SequentialAgent` /
 `LoopAgent` orchestration. If a future ADK Workflow API supersedes those classes, migrate
@@ -44,12 +45,14 @@ gcloud run deploy notatnik-adk-slice \
   --project "$PROJECT" --region "$REGION" --image "$IMAGE" \
   --service-account notatnik-adk-run@$PROJECT.iam.gserviceaccount.com \
   --allow-unauthenticated --min-instances 0 --max-instances 2 \
-  --set-env-vars MOCK_MODE=true,GROUNDING_PDQ=1,GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=$PROJECT,GOOGLE_CLOUD_LOCATION=global,RUN_TIMEOUT_SECONDS=180,MAX_AGENT_ITERATIONS=4,MAX_REQUEST_BYTES=4096,RUN_RATE_LIMIT_PER_MINUTE=4,RUN_GLOBAL_RATE_LIMIT_PER_MINUTE=8,ALLOW_EVIDENCE=false,RUN_ACCESS_TOKEN=$RUN_ACCESS_TOKEN
+  --set-env-vars MOCK_MODE=true,GROUNDING_PDQ=1,GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=$PROJECT,GOOGLE_CLOUD_LOCATION=global,RUN_TIMEOUT_SECONDS=180,MAX_AGENT_ITERATIONS=4,MAX_REQUEST_BYTES=4096,RUN_RATE_LIMIT_PER_MINUTE=4,RUN_GLOBAL_RATE_LIMIT_PER_MINUTE=8,ALLOW_EVIDENCE=true,RUN_ACCESS_TOKEN=$RUN_ACCESS_TOKEN
 ```
 
 Paste the testing-access URL as `$URL/?token=$RUN_ACCESS_TOKEN` in Devpost notes. The UI stores
 the token in browser session storage and sends it as a bearer header for `/run`, then removes the
-token from the visible URL.
+token from the visible URL. When the token is accepted, the app shows real work mode and can run the
+evidence agent if the Evidence option is selected. Without a valid token, the app shows mock mode and
+returns deterministic mock output.
 
 `cloudrun.service.yaml` is a template for reviewers who prefer manifest-based deployment;
 replace `IMAGE_URI_REPLACED_BY_DEPLOY` before applying it. The CLI command above is the
@@ -90,7 +93,7 @@ The resume script restores public ingress, restores the `allUsers` invoker bindi
 `min-instances=0`, caps `max-instances` at 2 by default, refreshes spend-control env vars,
 and smoke-checks `/health`. It refuses to resume public access without `RUN_ACCESS_TOKEN`
 unless `ALLOW_UNPROTECTED_RUN=1` is set for local debugging. Override `MAX_INSTANCES=1`,
-`ALLOW_EVIDENCE=true`, or `SMOKE=0` if needed.
+`ALLOW_EVIDENCE=false`, or `SMOKE=0` if needed.
 
 Check current state:
 

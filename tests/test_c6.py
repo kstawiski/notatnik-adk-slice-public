@@ -109,7 +109,8 @@ def test_health_and_cases_are_offline() -> None:
     assert health.json()["run_auth_required"] is False
     assert health.json()["run_rate_limited"] is True
     assert health.json()["max_agent_iterations"] == 4
-    assert health.json()["evidence_enabled"] is False
+    assert health.json()["evidence_enabled"] is True
+    assert health.json()["mock_fallback_enabled"] is False
     assert client.get("/healthz").status_code == 200
 
     cases = client.get("/cases")
@@ -198,38 +199,116 @@ def test_run_endpoint_caches_identical_public_runs(monkeypatch) -> None:
     assert second.json()["billing"]["cache_hit"] is True
 
 
-def test_run_endpoint_requires_access_token_when_configured(monkeypatch) -> None:
+def test_auth_status_reports_real_and_mock_modes(monkeypatch) -> None:
     monkeypatch.setenv("RUN_ACCESS_TOKEN", "judge-secret")
     client = TestClient(app)
 
-    res = client.post("/run", json={"case_id": "NOPE"})
-    assert res.status_code == 401
+    missing = client.get("/auth/status")
+    assert missing.status_code == 200
+    assert missing.json()["run_mode"] == "mock"
+    assert missing.json()["token_status"] == "missing"
+    assert missing.json()["token_applied"] is False
 
-    query_res = client.post("/run?token=judge-secret", json={"case_id": "NOPE"})
-    assert query_res.status_code == 404
+    invalid = client.get("/auth/status", headers={"Authorization": "Bearer wrong"})
+    assert invalid.status_code == 200
+    assert invalid.json()["run_mode"] == "mock"
+    assert invalid.json()["token_status"] == "invalid"
+    assert invalid.json()["token_applied"] is False
 
-    header_res = client.post(
+    valid = client.get("/auth/status?token=judge-secret")
+    assert valid.status_code == 200
+    assert valid.json()["run_mode"] == "real"
+    assert valid.json()["token_status"] == "valid"
+    assert valid.json()["token_applied"] is True
+    assert valid.json()["evidence_available"] is True
+
+
+def test_run_endpoint_returns_mock_without_or_with_invalid_token(monkeypatch) -> None:
+    monkeypatch.setenv("RUN_ACCESS_TOKEN", "judge-secret")
+    client = TestClient(app)
+
+    no_token = client.post(
+        "/run",
+        json={"case_id": "CASE-003", "max_iterations": 4, "include_evidence": True},
+    )
+    assert no_token.status_code == 200
+    assert no_token.json()["run_mode"] == "mock"
+    assert no_token.json()["auth"]["token_status"] == "missing"
+    assert no_token.json()["vertex"]["called"] is False
+    assert "[MOCK MODE" in no_token.json()["after"]["draft"]
+    assert "[DISCREPANCY]" in no_token.json()["after"]["draft"]
+    assert no_token.json()["after"]["evidence_requested"] is True
+    assert "Mock evidence" in no_token.json()["after"]["evidence"]
+
+    invalid = client.post(
+        "/run",
+        headers={"Authorization": "Bearer wrong"},
+        json={"case_id": "CASE-003", "max_iterations": 4, "include_evidence": False},
+    )
+    assert invalid.status_code == 200
+    assert invalid.json()["run_mode"] == "mock"
+    assert invalid.json()["auth"]["token_status"] == "invalid"
+    assert invalid.json()["vertex"]["called"] is False
+
+
+def test_run_endpoint_uses_real_path_when_token_is_valid(monkeypatch) -> None:
+    service_main._RUN_CACHE.clear()
+    monkeypatch.setenv("RUN_ACCESS_TOKEN", "judge-secret")
+    seen: dict[str, object] = {}
+
+    async def fake_run_case(
+        case_id: str,
+        max_iterations: int = 4,
+        *,
+        scrub_output: bool = True,
+        include_evidence: bool = True,
+    ) -> CaseRun:
+        seen["case_id"] = case_id
+        seen["include_evidence"] = include_evidence
+        run = CaseRun(case_id=case_id)
+        run.events = [{"author": "documentation", "type": "text", "text": "Diagnosis: synthetic"}]
+        run.state = {"draft": "Diagnosis: synthetic", "evidence": "PDQ evidence", "qc_passed": True}
+        return run
+
+    monkeypatch.setattr("service.main.run_case", fake_run_case)
+    client = TestClient(app)
+    res = client.post(
         "/run",
         headers={"Authorization": "Bearer judge-secret"},
-        json={"case_id": "NOPE"},
+        json={"case_id": "CASE-003", "max_iterations": 4, "include_evidence": True},
     )
-    assert header_res.status_code == 404
+    assert res.status_code == 200
+    body = res.json()
+    assert body["run_mode"] == "real"
+    assert body["auth"]["token_status"] == "valid"
+    assert body["auth"]["token_applied"] is True
+    assert body["vertex"]["called"] is True
+    assert seen == {"case_id": "CASE-003", "include_evidence": True}
 
 
 def test_run_endpoint_rejects_expensive_public_options(monkeypatch) -> None:
-    monkeypatch.delenv("RUN_ACCESS_TOKEN", raising=False)
+    monkeypatch.setenv("RUN_ACCESS_TOKEN", "judge-secret")
     monkeypatch.setenv("MAX_AGENT_ITERATIONS", "3")
     monkeypatch.setenv("ALLOW_EVIDENCE", "false")
     client = TestClient(app)
 
+    mock_evidence = client.post(
+        "/run",
+        json={"case_id": "CASE-003", "max_iterations": 3, "include_evidence": True},
+    )
+    assert mock_evidence.status_code == 200
+    assert mock_evidence.json()["run_mode"] == "mock"
+
     too_many_iterations = client.post(
         "/run",
+        headers={"Authorization": "Bearer judge-secret"},
         json={"case_id": "CASE-003", "max_iterations": 4, "include_evidence": False},
     )
     assert too_many_iterations.status_code == 400
 
     evidence = client.post(
         "/run",
+        headers={"Authorization": "Bearer judge-secret"},
         json={"case_id": "CASE-003", "max_iterations": 3, "include_evidence": True},
     )
     assert evidence.status_code == 403
@@ -250,9 +329,14 @@ def test_run_endpoint_rejects_oversized_request(monkeypatch) -> None:
 def test_judge_ui_exposes_evidence_toggle() -> None:
     html = (ROOT / "service" / "static" / "index.html").read_text()
     assert 'id="evidenceToggle"' in html
+    assert 'id="tokenInput"' in html
+    assert 'id="modeBadge"' in html
     assert 'include_evidence: $("evidenceToggle").checked' in html
     assert "notatnikRunToken" in html
     assert "Authorization" in html
+    assert "/auth/status" in html
+    assert "Mock mode - paste token for real run" in html
+    assert "Real Vertex mode - token accepted" in html
     assert "loadHealth()" in html
     assert "Radioonkolog.pl / Notatnik Medyczny" in html
     assert "https://radioonkolog.pl/polityka/" in html

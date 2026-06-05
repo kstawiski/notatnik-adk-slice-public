@@ -94,7 +94,7 @@
       }
       .controls {
         display: grid;
-        grid-template-columns: minmax(280px, 1fr) auto minmax(136px, auto);
+        grid-template-columns: minmax(220px, 0.95fr) minmax(260px, 1.05fr) auto minmax(136px, auto);
         align-items: center;
         gap: 10px;
         justify-content: stretch;
@@ -113,7 +113,7 @@
         font-size: 11px;
         line-height: 1;
       }
-      select, button {
+      select, input, button {
         height: 40px;
         border-radius: 6px;
         border: 1px solid var(--line);
@@ -122,10 +122,13 @@
         font: inherit;
         font-size: 14px;
       }
-      select {
+      select, input {
         min-width: 0;
         width: 100%;
         padding: 0 34px 0 10px;
+      }
+      input {
+        padding-right: 10px;
       }
       button {
         border-color: var(--teal-dark);
@@ -139,9 +142,51 @@
         white-space: nowrap;
       }
       button:hover { background: var(--teal-dark); }
+      button.secondary {
+        min-width: 76px;
+        padding: 0 12px;
+        color: var(--teal-dark);
+        background: #eef7f5;
+        border-color: #b8d6d1;
+        box-shadow: none;
+      }
+      button.secondary:hover {
+        background: #dcefeb;
+      }
       button:disabled {
         cursor: wait;
         opacity: 0.72;
+      }
+      .token-row {
+        display: grid;
+        grid-template-columns: minmax(120px, 1fr) auto;
+        gap: 6px;
+      }
+      .mode-badge {
+        min-height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 4px 9px;
+        border: 1px solid #cbded9;
+        border-radius: 999px;
+        background: #f2faf8;
+        color: var(--teal-dark);
+        font-size: 12px;
+        font-weight: 740;
+        align-self: end;
+        grid-column: 1 / -1;
+        justify-self: end;
+      }
+      .mode-badge.mock {
+        border-color: #ead59b;
+        background: #fff7e4;
+        color: #7c5200;
+      }
+      .mode-badge.invalid {
+        border-color: #efc3bf;
+        background: #fff0ee;
+        color: var(--bad);
       }
       .toggle {
         height: 40px;
@@ -507,6 +552,8 @@
         .flow { grid-template-columns: 1fr; }
         .controls { align-items: stretch; }
         select, button, .toggle { width: 100%; }
+        .token-row { grid-template-columns: 1fr; }
+        .mode-badge, #status { justify-self: stretch; justify-content: center; text-align: center; }
       }
     </style>
   </head>
@@ -528,11 +575,19 @@
             <span>Synthetic case</span>
             <select id="caseSelect" aria-label="Synthetic case"></select>
           </label>
+          <label class="field">
+            <span>Testing access token</span>
+            <span class="token-row">
+              <input id="tokenInput" type="password" autocomplete="off" placeholder="Paste token for real run" aria-label="Testing access token" />
+              <button id="applyTokenBtn" class="secondary" type="button">Apply</button>
+            </span>
+          </label>
           <label class="toggle">
             <input id="evidenceToggle" type="checkbox" />
             Evidence
           </label>
           <button id="runBtn" type="button">Run ADK loop</button>
+          <span id="modeBadge" class="mode-badge mock">Mock mode - no token</span>
           <span id="status">Loading cases...</span>
         </div>
       </div>
@@ -618,7 +673,17 @@
 
     <script>
       const $ = (id) => document.getElementById(id);
-      const state = { cases: [], runToken: "" };
+      const state = {
+        cases: [],
+        runToken: "",
+        auth: {
+          run_mode: "mock",
+          token_status: "missing",
+          token_applied: false,
+          message: "No testing token supplied; returning a mock response without Vertex calls.",
+          evidence_available: false,
+        },
+      };
 
       function initRunToken() {
         const params = new URLSearchParams(window.location.search);
@@ -632,6 +697,12 @@
           window.history.replaceState({}, document.title, cleanUrl);
         }
         state.runToken = sessionStorage.getItem("notatnikRunToken") || "";
+      }
+
+      function authHeaders(extra = {}) {
+        const headers = { ...extra };
+        if (state.runToken) headers.Authorization = `Bearer ${state.runToken}`;
+        return headers;
       }
 
       function escapeHtml(value) {
@@ -654,6 +725,26 @@
         const el = $("status");
         el.textContent = text;
         el.className = cls;
+      }
+
+      function setModeBadge(auth) {
+        state.auth = { ...state.auth, ...auth };
+        const badge = $("modeBadge");
+        if (auth.run_mode === "real") {
+          badge.textContent = auth.token_status === "valid" ? "Real Vertex mode - token accepted" : "Real Vertex mode";
+          badge.className = "mode-badge";
+          $("evidenceToggle").disabled = auth.evidence_available === false;
+          $("evidenceToggle").closest(".toggle").title = auth.evidence_available === false
+            ? "Evidence is unavailable in the current real-run configuration."
+            : "Evidence retrieval is available for authorized real runs.";
+        } else {
+          badge.textContent = auth.token_status === "invalid"
+            ? "Mock mode - token not accepted"
+            : "Mock mode - paste token for real run";
+          badge.className = auth.token_status === "invalid" ? "mode-badge invalid" : "mode-badge mock";
+          $("evidenceToggle").disabled = false;
+          $("evidenceToggle").closest(".toggle").title = "In mock mode this shows mock evidence. Paste a valid token for real evidence retrieval.";
+        }
       }
 
       function setFlowState(active) {
@@ -687,12 +778,16 @@
 
       function renderAfter(data) {
         const evidence = data.after.evidence_requested ? (data.after.evidence || "(none)") : "(not requested in fast path)";
-        return `<pre class="clinical-pre">${highlightClinical(data.after.draft || "")}</pre><div class="evidence-block"><strong>Evidence</strong><br>${highlightClinical(evidence)}</div>`;
+        const mode = data.run_mode === "real"
+          ? "Real Vertex-backed ADK run."
+          : "Mock response. No Vertex call was made because no valid token was supplied.";
+        return `<div class="evidence-block"><strong>Run mode</strong><br>${escapeHtml(mode)}</div><pre class="clinical-pre">${highlightClinical(data.after.draft || "")}</pre><div class="evidence-block"><strong>Evidence</strong><br>${highlightClinical(evidence)}</div>`;
       }
 
       function renderTrace(trace) {
         const calls = (trace.tool_calls || []).map((name) => `<span class="tool-chip">${escapeHtml(name)}</span>`).join("");
         const summary = `<div class="trace-summary">
+          <span class="tool-chip">${escapeHtml(state.auth.run_mode === "real" ? "real Vertex mode" : "mock mode")}</span>
           <span class="tool-chip">drafts ${escapeHtml(trace.doc_drafts)}</span>
           <span class="tool-chip">QC rejections ${escapeHtml(trace.qc_rejections)}</span>
           <span class="tool-chip">QC passed ${escapeHtml(trace.qc_passed)}</span>
@@ -729,7 +824,7 @@
         setExplanation("What to check before running", item.case_id === "CASE-003"
           ? "In the source pane, compare the MRI and MDT files: MRI records cT2 N0 while the MDT note records cT3 N1."
           : "Read the original synthetic files first. The output should stay faithful to these inputs, expose gaps, and avoid source identifiers.");
-        setStatus(`${state.cases.length} cases ready`, "ok");
+        setStatus(state.auth.run_mode === "real" ? `${state.cases.length} cases ready for real runs` : `${state.cases.length} cases ready; mock mode`, "ok");
       }
 
       async function loadCases() {
@@ -750,29 +845,53 @@
       async function loadHealth() {
         const res = await fetch("/health");
         if (!res.ok) return;
-        const health = await res.json();
-        if (health.evidence_enabled === false) {
-          const toggle = $("evidenceToggle");
-          toggle.checked = false;
-          toggle.disabled = true;
-          toggle.closest(".toggle").title = "Evidence retrieval is disabled for the public spend-controlled demo.";
+        await res.json();
+      }
+
+      async function loadAuthStatus() {
+        const res = await fetch("/auth/status", { headers: authHeaders() });
+        if (!res.ok) return;
+        const auth = await res.json();
+        setModeBadge(auth);
+        $("tokenInput").value = "";
+        $("tokenInput").placeholder = auth.run_mode === "real"
+          ? "Token accepted"
+          : "Paste token for real run";
+        const item = selectedCase();
+        if (item) renderSelectedCase();
+      }
+
+      async function applyToken() {
+        const value = $("tokenInput").value.trim();
+        if (value) {
+          sessionStorage.setItem("notatnikRunToken", value);
+          state.runToken = value;
+        } else {
+          sessionStorage.removeItem("notatnikRunToken");
+          state.runToken = "";
         }
+        await loadAuthStatus();
+        setExplanation(state.auth.run_mode === "real" ? "Real work mode enabled" : "Mock mode without authorization",
+          state.auth.run_mode === "real"
+            ? "The testing token was accepted. Runs now call the real Vertex-backed ADK agent, and the Evidence option can retrieve evidence after QC approval."
+            : "No valid token is active. Runs return deterministic mock answers without Vertex calls. Paste the Devpost testing token to enable real work mode.");
       }
 
       async function runCase() {
         const btn = $("runBtn");
         btn.disabled = true;
         setFlowState("run");
-        setExplanation("What is happening now", "The documentation agent drafts a note. The QC agent independently checks source faithfulness and can force rewrites before the final answer is shown.");
-        $("afterOut").innerHTML = '<span class="working">Running Vertex ADK loop...</span>';
-        $("traceOut").innerHTML = '<span class="working">Waiting for ADK trace...</span>';
-        setStatus("Running Vertex agent...", "amber");
+        const realMode = state.auth.run_mode === "real";
+        setExplanation("What is happening now", realMode
+          ? "The documentation agent drafts a note. The QC agent independently checks source faithfulness and can force rewrites before the final answer is shown. Evidence runs only after QC approval."
+          : "No valid token is active, so the service will return a deterministic mock answer without Vertex calls. Paste the testing token to run the real agent.");
+        $("afterOut").innerHTML = `<span class="working">${realMode ? "Running Vertex ADK loop..." : "Preparing mock response..."}</span>`;
+        $("traceOut").innerHTML = `<span class="working">${realMode ? "Waiting for ADK trace..." : "Preparing mock trace..."}</span>`;
+        setStatus(realMode ? "Running real Vertex agent..." : "Running mock mode...", "amber");
         try {
-          const headers = { "Content-Type": "application/json" };
-          if (state.runToken) headers.Authorization = `Bearer ${state.runToken}`;
           const res = await fetch("/run", {
             method: "POST",
-            headers,
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({
               case_id: $("caseSelect").value,
               max_iterations: 4,
@@ -781,6 +900,7 @@
           });
           if (!res.ok) throw new Error(await res.text());
           const data = await res.json();
+          setModeBadge({ ...data.auth, evidence_available: data.run_mode === "real" && $("evidenceToggle").disabled === false });
           $("sourceOut").innerHTML = renderSourceText(data.source.text);
           $("beforeOut").innerHTML = renderRisk(data.before);
           $("afterOut").innerHTML = renderAfter(data);
@@ -793,18 +913,19 @@
           $("mPii").textContent = data.safety.contains_source_identifier_after_scrub ? "HOLD" : "PASS";
           $("mPii").className = data.safety.contains_source_identifier_after_scrub ? "bad" : "ok";
           setFlowState("output");
-          setExplanation("What changed after hardening", data.trace.self_corrected
-            ? `QC rejected ${data.trace.qc_rejections} draft(s). The final note passed QC, surfaced the discrepancy instead of choosing one stage, and passed generated-output scrubbing.`
-            : "The run passed QC and output scrubbing. Check the final note against the source documents and trace.");
-          setStatus(`${data.vertex.model} | ${data.vertex.location}`, "ok");
+          if (data.run_mode === "real") {
+            setExplanation("Real work mode", data.trace.self_corrected
+              ? `Token accepted. QC rejected ${data.trace.qc_rejections} draft(s). The final real ADK run passed QC, surfaced the discrepancy instead of choosing one stage, and passed generated-output scrubbing.`
+              : "Token accepted. This was a real Vertex-backed ADK run; check the final note against the source documents and trace.");
+            setStatus(`${data.vertex.model} | ${data.vertex.location} | real`, "ok");
+          } else {
+            setExplanation("Mock mode without authorization", "No valid token was active. The app returned a deterministic mock answer and made no Vertex call. Paste the Devpost testing token to enable real work mode and real evidence retrieval.");
+            setStatus("Mock response | no Vertex call", "amber");
+          }
         } catch (err) {
           setFlowState("risk");
           setStatus("Run failed", "bad");
-          if (String(err).includes("401")) {
-            setExplanation("Testing token required", "The source documents remain public, but running the Vertex-backed agent requires the testing access token supplied in Devpost.");
-          } else {
-            setExplanation("Run failed", "The service returned an error. Do not record around this; rerun only after the service is fixed.");
-          }
+          setExplanation("Run failed", "The service returned an error. Do not record around this; rerun only after the service is fixed.");
           $("traceOut").textContent = String(err);
         } finally {
           btn.disabled = false;
@@ -812,9 +933,14 @@
       }
 
       initRunToken();
+      $("applyTokenBtn").addEventListener("click", applyToken);
+      $("tokenInput").addEventListener("keydown", (event) => {
+        if (event.key === "Enter") applyToken();
+      });
       $("runBtn").addEventListener("click", runCase);
       $("caseSelect").addEventListener("change", renderSelectedCase);
       loadHealth().catch(() => {});
+      loadAuthStatus().catch(() => setModeBadge(state.auth));
       loadCases().catch((err) => setStatus(String(err), "bad"));
     </script>
   </body>

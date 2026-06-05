@@ -43,7 +43,7 @@ spec:
             - name: RUN_GLOBAL_RATE_LIMIT_PER_MINUTE
               value: "8"
             - name: ALLOW_EVIDENCE
-              value: "false"
+              value: "true"
           resources:
             limits:
               cpu: "1"

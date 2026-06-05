@@ -33,7 +33,7 @@ _RATE_LOCK = asyncio.Lock()
 _CACHE_LOCK = asyncio.Lock()
 _RUN_BUCKETS: dict[str, deque[float]] = defaultdict(deque)
 _GLOBAL_BUCKET: deque[float] = deque()
-_RUN_CACHE: dict[tuple[str, int, bool], tuple[float, dict[str, Any]]] = {}
+_RUN_CACHE: dict[tuple[str, str, int, bool], tuple[float, dict[str, Any]]] = {}
 
 
 class RunRequest(BaseModel):
@@ -93,7 +93,17 @@ def create_app() -> FastAPI:
             "run_rate_limited": _env_int("RUN_RATE_LIMIT_PER_MINUTE", 4, minimum=0) > 0
             or _env_int("RUN_GLOBAL_RATE_LIMIT_PER_MINUTE", 8, minimum=0) > 0,
             "max_agent_iterations": _env_int("MAX_AGENT_ITERATIONS", 4, minimum=1, maximum=6),
-            "evidence_enabled": _env_bool("ALLOW_EVIDENCE", False),
+            "evidence_enabled": _env_bool("ALLOW_EVIDENCE", True),
+            "mock_fallback_enabled": bool(_run_access_token()),
+        }
+
+    @app.get("/auth/status")
+    async def auth_status(request: Request) -> dict[str, Any]:
+        auth = _run_auth_status(request)
+        return {
+            **auth,
+            "auth_required": bool(_run_access_token()),
+            "evidence_available": auth["run_mode"] == "real" and _env_bool("ALLOW_EVIDENCE", True),
         }
 
     @app.get("/cases")
@@ -107,7 +117,7 @@ def create_app() -> FastAPI:
 
     @app.post("/run")
     async def run(req: RunRequest, request: Request) -> dict[str, Any]:
-        _authorize_run(request)
+        auth = _run_auth_status(request)
         known = {case["case_id"] for case in data_tools.list_cases()}
         if req.case_id not in known:
             raise HTTPException(status_code=404, detail=f"Unknown case_id: {req.case_id}")
@@ -117,10 +127,12 @@ def create_app() -> FastAPI:
                 status_code=400,
                 detail=f"max_iterations is capped at {max_iterations} for the public demo",
             )
-        if req.include_evidence and not _env_bool("ALLOW_EVIDENCE", False):
+        if auth["run_mode"] != "real":
+            return _mock_response(req, auth=auth)
+        if req.include_evidence and not _env_bool("ALLOW_EVIDENCE", True):
             raise HTTPException(status_code=403, detail="Evidence retrieval is disabled for this public demo")
         await _enforce_run_rate_limit(request)
-        cache_key = (req.case_id, req.max_iterations, req.include_evidence)
+        cache_key = ("real", req.case_id, req.max_iterations, req.include_evidence)
         cached = await _get_cached_run(cache_key)
         if cached is not None:
             return cached
@@ -140,7 +152,7 @@ def create_app() -> FastAPI:
         except Exception as exc:  # noqa: BLE001 - surfaced to judges as a service failure, not hidden
             LOG.exception("Agent run failed for case_id=%s", req.case_id)
             raise HTTPException(status_code=502, detail=f"Agent run failed: {type(exc).__name__}") from exc
-        response = _response_from_run(result, include_evidence=req.include_evidence)
+        response = _response_from_run(result, include_evidence=req.include_evidence, auth=auth)
         await _set_cached_run(cache_key, response)
         return response
 
@@ -170,16 +182,36 @@ def _run_access_token() -> str:
     return os.environ.get("RUN_ACCESS_TOKEN", "").strip()
 
 
-def _authorize_run(request: Request) -> None:
+def _run_auth_status(request: Request) -> dict[str, Any]:
     required = _run_access_token()
     if not required:
-        return
+        return {
+            "run_mode": "real",
+            "token_status": "not_configured",
+            "token_applied": False,
+            "message": "No access token is configured; local runs are unprotected.",
+        }
     supplied = _request_token(request)
-    if not supplied or not hmac.compare_digest(supplied, required):
-        raise HTTPException(
-            status_code=401,
-            detail="A testing access token is required to run the Vertex-backed agent",
-        )
+    if not supplied:
+        return {
+            "run_mode": "mock",
+            "token_status": "missing",
+            "token_applied": False,
+            "message": "No testing token supplied; returning a mock response without Vertex calls.",
+        }
+    if hmac.compare_digest(supplied, required):
+        return {
+            "run_mode": "real",
+            "token_status": "valid",
+            "token_applied": True,
+            "message": "Testing token accepted; real Vertex-backed ADK run is enabled.",
+        }
+    return {
+        "run_mode": "mock",
+        "token_status": "invalid",
+        "token_applied": False,
+        "message": "Testing token was not accepted; returning a mock response without Vertex calls.",
+    }
 
 
 def _request_token(request: Request) -> str:
@@ -224,7 +256,7 @@ def _trim_bucket(bucket: deque[float], now: float, window: int) -> None:
         bucket.popleft()
 
 
-async def _get_cached_run(key: tuple[str, int, bool]) -> dict[str, Any] | None:
+async def _get_cached_run(key: tuple[str, str, int, bool]) -> dict[str, Any] | None:
     ttl = _env_int("RUN_CACHE_TTL_SECONDS", 3600, minimum=0)
     if ttl == 0:
         return None
@@ -242,7 +274,7 @@ async def _get_cached_run(key: tuple[str, int, bool]) -> dict[str, Any] | None:
         return cached
 
 
-async def _set_cached_run(key: tuple[str, int, bool], response: dict[str, Any]) -> None:
+async def _set_cached_run(key: tuple[str, str, int, bool], response: dict[str, Any]) -> None:
     ttl = _env_int("RUN_CACHE_TTL_SECONDS", 3600, minimum=0)
     if ttl == 0:
         return
@@ -254,7 +286,13 @@ async def _set_cached_run(key: tuple[str, int, bool], response: dict[str, Any]) 
         _RUN_CACHE[key] = (time.monotonic(), stored)
 
 
-def _response_from_run(run: CaseRun, *, include_evidence: bool = True) -> dict[str, Any]:
+def _response_from_run(
+    run: CaseRun,
+    *,
+    include_evidence: bool = True,
+    auth: dict[str, Any] | None = None,
+    vertex_called: bool = True,
+) -> dict[str, Any]:
     source = data_tools.get_document_text(run.case_id)
     title = _title_for(run.case_id)
     terms = sensitive_terms_from_source(source)
@@ -269,6 +307,13 @@ def _response_from_run(run: CaseRun, *, include_evidence: bool = True) -> dict[s
     return {
         "case_id": run.case_id,
         "title": title,
+        "run_mode": (auth or {}).get("run_mode", "real"),
+        "auth": auth or {
+            "run_mode": "real",
+            "token_status": "not_configured",
+            "token_applied": False,
+            "message": "No access token is configured; local runs are unprotected.",
+        },
         "source": {
             "document_count": _document_count(run.case_id),
             "text": source,
@@ -294,8 +339,55 @@ def _response_from_run(run: CaseRun, *, include_evidence: bool = True) -> dict[s
             "events": _public_trace_events(trace),
         },
         "billing": {"cache_hit": False},
-        "vertex": {"model": MODEL_ID, "location": LOCATION},
+        "vertex": {"model": MODEL_ID, "location": LOCATION, "called": vertex_called},
     }
+
+
+def _mock_response(req: RunRequest, *, auth: dict[str, Any]) -> dict[str, Any]:
+    run = CaseRun(case_id=req.case_id)
+    if req.case_id == "CASE-003":
+        draft = "\n".join([
+            "[MOCK MODE - no Vertex call]",
+            "Diagnosis: Rectal adenocarcinoma",
+            "TNM stage: [DISCREPANCY] cT2 N0 (MRI) vs cT3 N1 (MDT) - requires clinician reconciliation",
+            "Key biomarkers: [DATA GAP] Key biomarkers not documented in source",
+            "Margins / nodes: [DATA GAP] Margins not documented in source",
+            "Safety note: mock response shown because no valid testing token was supplied.",
+        ])
+        events = [
+            {"author": "documentation", "type": "text", "text": "mock draft 1"},
+            {"author": "qc", "type": "text", "text": "mock QC rejection: conflict not explicit"},
+            {"author": "documentation", "type": "text", "text": "mock draft 2"},
+            {"author": "qc", "type": "text", "text": "mock QC rejection: source labels missing"},
+            {"author": "documentation", "type": "text", "text": "mock draft 3"},
+            {"author": "qc", "type": "text", "text": "mock QC rejection: discrepancy wording incomplete"},
+            {"author": "documentation", "type": "text", "text": draft},
+            {"author": "qc", "type": "tool_call", "name": "exit_loop", "args": {}},
+        ]
+        qc_passed = True
+    else:
+        draft = "\n".join([
+            "[MOCK MODE - no Vertex call]",
+            f"Diagnosis: synthetic case {req.case_id}",
+            "TNM stage: source-grounded summary would be generated in real mode",
+            "Safety note: mock response shown because no valid testing token was supplied.",
+        ])
+        events = [
+            {"author": "documentation", "type": "text", "text": draft},
+            {"author": "qc", "type": "tool_call", "name": "exit_loop", "args": {}},
+        ]
+        qc_passed = True
+    run.events = events
+    run.state = {
+        "draft": draft,
+        "evidence": (
+            "Mock evidence: in real mode, the evidence agent runs after QC approval and can retrieve public PDQ grounding."
+            if req.include_evidence
+            else ""
+        ),
+        "qc_passed": qc_passed,
+    }
+    return _response_from_run(run, include_evidence=req.include_evidence, auth=auth, vertex_called=False)
 
 
 def _public_trace_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:

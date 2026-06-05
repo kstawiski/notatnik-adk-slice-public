@@ -31,7 +31,7 @@ Use these testing links:
 - Direct package download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download
 - Video URL: https://www.youtube.com/watch?v=b_SkfPokvCA
 
-The public Cloud Run service was smoke-tested on 2026-06-05 with `/health`, `/cases`, first-screen CASE-003 source preview, and `CASE-003` (`include_evidence=false`). The read-only pages are public; the Vertex-backed `/run` action should use the testing access token supplied in Devpost notes to control spend. Do not paste local service URLs into Devpost.
+The public Cloud Run service was smoke-tested on 2026-06-05 with `/health`, `/cases`, first-screen CASE-003 source preview, tokenless mock mode, and token-authorized real mode. The read-only pages are public; `/run` returns deterministic mock output without a token and runs the Vertex-backed ADK flow only when the testing access token supplied in Devpost notes is accepted. Do not paste local service URLs into Devpost.
 
 ## Description Field
 
@@ -51,7 +51,7 @@ The central demo case is CASE-003. One source says rectal cancer is cT2 N0, whil
 
 ### Technologies used
 
-The project uses Gemini on Vertex AI, Google ADK, Cloud Run, Docker, and a FastAPI judge interface. ADK coordinates the documentation, QC, and evidence agents. MCP/FastMCP exposes deterministic synthetic data tools through a stdio server. The demo uses a committed NCI PDQ grounding index, NumPy-backed retrieval, deterministic generated-output scrubbing, and a self-contained synthetic simulation, evaluation, and trace workflow. The public Cloud Run service is spend-controlled with a token-protected `/run` action, rate limits, evidence disabled for the public demo, and minimized trace output.
+The project uses Gemini on Vertex AI, Google ADK, Cloud Run, Docker, and a FastAPI judge interface. ADK coordinates the documentation, QC, and evidence agents. MCP/FastMCP exposes deterministic synthetic data tools through a stdio server. The demo uses a committed NCI PDQ grounding index, NumPy-backed retrieval, deterministic generated-output scrubbing, and a self-contained synthetic simulation, evaluation, and trace workflow. The public Cloud Run service is spend-controlled with mock fallback for unauthenticated visitors, token-protected real `/run` execution, rate limits, authorized evidence retrieval, and minimized trace output.
 
 ### Data sources
 
