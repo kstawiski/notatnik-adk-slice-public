@@ -166,6 +166,53 @@
       main {
         padding: 18px 0 36px;
       }
+      footer {
+        border-top: 1px solid var(--line);
+        background: #ffffff;
+      }
+      .site-footer {
+        display: grid;
+        grid-template-columns: minmax(280px, 1fr) minmax(280px, auto);
+        gap: 24px;
+        align-items: start;
+        padding: 26px 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .footer-brand strong {
+        color: var(--ink);
+        display: block;
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      .footer-brand p {
+        margin: 0;
+        line-height: 1.45;
+      }
+      .footer-meta {
+        display: grid;
+        gap: 8px;
+        justify-items: end;
+        text-align: right;
+      }
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        justify-content: flex-end;
+      }
+      .footer-links a, .footer-meta a {
+        color: var(--teal-dark);
+        font-weight: 680;
+        text-decoration: none;
+      }
+      .footer-links a:hover, .footer-meta a:hover {
+        text-decoration: underline;
+      }
+      .footer-note {
+        color: var(--muted);
+        line-height: 1.38;
+      }
       .guide {
         display: grid;
         grid-template-columns: minmax(260px, 0.92fr) minmax(420px, 1.08fr);
@@ -449,6 +496,9 @@
         .guide { grid-template-columns: 1fr; }
         .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .grid { grid-template-columns: 1fr; }
+        .site-footer { grid-template-columns: 1fr; }
+        .footer-meta { justify-items: start; text-align: left; }
+        .footer-links { justify-content: flex-start; }
       }
       @media (max-width: 560px) {
         .wrap { width: min(100% - 24px, 1180px); }
@@ -547,6 +597,24 @@
         <div id="traceOut" class="pane-body trace-lines">-</div>
       </section>
     </main>
+
+    <footer>
+      <div class="wrap site-footer">
+        <div class="footer-brand">
+          <strong>Radioonkolog.pl / Notatnik Medyczny</strong>
+          <p>Prywatna Praktyka Lekarska. Public Google AI Agents Challenge slice using synthetic oncology cases only.</p>
+        </div>
+        <div class="footer-meta">
+          <div class="footer-note">NIP: 7252336051 / REGON: 526597568 / E-mail: <a href="mailto:konrad@radioonkolog.pl">konrad@radioonkolog.pl</a></div>
+          <div class="footer-note">Synthetic challenge demo only. No real PHI.</div>
+          <nav class="footer-links" aria-label="Footer links">
+            <a href="https://radioonkolog.pl/" rel="noopener noreferrer" target="_blank">Radioonkolog.pl</a>
+            <a href="https://radioonkolog.pl/polityka/" rel="noopener noreferrer" target="_blank">Polityka prywatnosci</a>
+            <a href="https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d" rel="noopener noreferrer" target="_blank">Code package</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
 
     <script>
       const $ = (id) => document.getElementById(id);

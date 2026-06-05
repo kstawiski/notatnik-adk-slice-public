@@ -162,6 +162,9 @@ def test_judge_ui_exposes_evidence_toggle() -> None:
     html = (ROOT / "service" / "static" / "index.html").read_text()
     assert 'id="evidenceToggle"' in html
     assert 'include_evidence: $("evidenceToggle").checked' in html
+    assert "Radioonkolog.pl / Notatnik Medyczny" in html
+    assert "https://radioonkolog.pl/polityka/" in html
+    assert "Synthetic challenge demo only. No real PHI." in html
 
 
 def test_unknown_case_returns_404() -> None:
