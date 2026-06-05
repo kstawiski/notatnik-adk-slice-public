@@ -6,66 +6,97 @@ Detailed recording plan: `video_recording_scenario.md`.
 
 Do not show proprietary prompts, private backend code, real PHI, secrets, service-account files, browser tabs with unrelated patient systems, or unrelated institutional references.
 
-## 0:00-0:12 - Opening
+## 0:00-0:13 - Opening
 
 Narration:
 
-"This is Notatnik Medyczny's Google AI Agents Challenge submission for Track 2 Optimize. It is a new ADK reliability slice for an existing oncology documentation product. The public demo uses synthetic cases only."
+"This is Notatnik Medyczny's Google AI Agents Challenge submission for Track 2 Optimize: an ADK reliability slice for an existing oncology documentation product. This public version is self-contained and synthetic only; production prompts, recognizers, and patient data stay outside the repo."
 
 Screen:
 
-- Title slide or service home page.
-- Show "Track 2 Optimize", "EMEA", "synthetic data only".
+- Demo home page: Header showing "Track 2 Optimize", "Gemini on Vertex AI", and "ADK + MCP".
+- Cursor highlights "synthetic cases only".
 
-## 0:12-0:38 - The Reliability Problem
+## 0:13-0:31 - Reliability And Evaluation
 
 Narration:
 
-"In oncology documentation, a fluent agent is not enough. It can fabricate a cancer stage, miss a contradiction between reports, or reintroduce identifiers. We made those failures measurable."
+"The evaluation used 15 synthetic cases, three temperature-zero runs per case, and an eight-case held-out split. A gold-grounded LLM grader, checked for style neutrality, showed prompt optimization improved held-out reliability by plus 0.115. The honest negative: the QC loop reintroduced synthetic identifiers on E-PII-02, so the service now adds deterministic output scrubbing."
 
 Screen:
 
-- `submission/reliability_delta.md` headline table or C4 report excerpt.
-- Highlight `E-CON-04`: fabricated `pT2b` fixed by optimized prompt.
-- Highlight the honest negative: QC reintroduced identifiers on `E-PII-02`.
+- Open `submission/reliability_delta.md`.
+- Highlight Evaluation setup, held-out test contrasts, `+0.115`, and `E-PII-02`.
 
-## 0:38-1:10 - Live Agent Demo
+## 0:31-0:45 - Source Conflict
 
 Narration:
 
-"Here is the Cloud Run judge surface running a synthetic rectal-cancer case. The source documents conflict: MRI says cT2 N0, while the MDT note says cT3 N1. The agent does not invent a stage; it surfaces uncertainty and forces clinician reconciliation. The ADK documentation agent drafts, the QC agent independently audits, and the loop only passes once the discrepancy is surfaced."
+"Case-003 is the live test. The source documents conflict: MRI says cT2 N0, while the MDT note says cT3 N1. A safe documentation agent should not silently choose one."
 
 Screen:
 
-- Open the service.
-- Select or keep default `CASE-003`.
-- Run with evidence retrieval disabled for the fast demo; the submitted service includes the evidence option and judges can enable it from the run controls.
-- Show metrics: QC passed, self-corrected, generated scrub PASS.
-- Show the after summary line: `[DISCREPANCY] TNM stage: cT2 N0 (MRI) vs cT3 N1 (MDT)`.
+- Return to demo home page.
+- Keep or select `CASE-003`.
+- Point to the source preview before running: MRI (`cT2 N0`) vs MDT (`cT3 N1`).
 
-## 1:10-1:30 - Architecture / Google Tech Receipt
+## 0:45-1:03 - Live Agent Demo And Orchestration
 
 Narration:
 
-"The slice is built on ADK sub-agents, real MCP tools, Gemini through Vertex AI, and a self-contained Cloud Run deployment. The production product remains separate from the public synthetic demo; no proprietary clinical prompts or recognizers are in the public repo."
+"We leave evidence retrieval off for speed. When I click Run, ADK orchestrates a documentation agent and a QC LoopAgent. The QC agent rechecks source data through MCP tools, and the response is released only after QC and scrub status pass."
 
 Screen:
 
-- `submission/architecture.svg`.
-- Optional browser/API receipts:
-  - A browser tab at `/health` shows model, project, location, cases.
-  - A redacted `/run` response can show QC status and generated-output scrub PASS.
+- Point to unchecked "Evidence" checkbox.
+- Click the "Run Agent" button.
+- Show "Running Vertex agent..." and use a jump-cut to display the finished run state.
 
-## 1:30-1:50 - Business and Close
+## 1:03-1:18 - Summary Output And Scrub Gate
 
 Narration:
 
-"The business wedge is oncology documentation: save physician time while making reliability visible and keeping clinicians in the approval loop. The key learning is honest optimization: prompt optimization generalized; multi-agent QC helped targeted contradictions but needed deterministic safety mitigation. That is what this submission demonstrates."
+"Here the final note preserves the discrepancy: cT2 N0 versus cT3 N1, requiring physician reconciliation. That is the core reliability behavior."
 
 Screen:
 
-- `submission/business_one_pager.md` ROI table.
-- End on demo URL and code URL after final deploy.
+- Scroll to the "After" panel in demo results.
+- Highlight the metrics row (`QC = PASS`, `Self-corrected = yes`, `Generated scrub = PASS`).
+- Highlight the discrepancy TNM staging line in the summary text.
+
+## 1:18-1:30 - Cloud Run And Vertex Receipt
+
+Narration:
+
+"The health tab is the deployment receipt: FastAPI on Cloud Run, Gemini 3.1 Flash Lite through Vertex AI at global location, 18 synthetic cases loaded, and the PDQ grounding index present."
+
+Screen:
+
+- Switch to browser tab showing `/health`.
+- Highlight JSON details: model, location, cases, and PDQ index availability.
+
+## 1:30-1:45 - Architecture And IP Firewall
+
+Narration:
+
+"The architecture shows the Track 2 mapping: fixtures are simulation, the held-out harness is evaluation, and the CaseRun trace is observability. MCP is the data boundary, with public NCI PDQ grounding and no private clinical IP in the public artifact."
+
+Screen:
+
+- Switch to browser tab showing `architecture.svg`.
+- Trace from Cloud Run, through ADK, across the MCP stdio boundary, to synthetic data tools and NCI PDQ grounding.
+
+## 1:45-1:55 - Business ROI & Close
+
+Narration:
+
+"The business wedge is radiation oncology documentation: save repetitive note time, make uncertainty visible, and keep physicians in the approval loop. Prompt optimization generalized; multi-agent QC was targeted; deterministic safety mitigation was necessary."
+
+Screen:
+
+- Switch to browser tab showing `business_one_pager.md`.
+- Focus on the ROI table (hours released and value).
+- End on slide displaying the demo and code URLs.
 
 ## Recording Checklist
 
@@ -74,3 +105,4 @@ Screen:
 - If using the local service for recording before deploy, do not show the URL as final testing access.
 - Use English narration or English subtitles.
 - Keep under 2 minutes.
+- Do not claim Agent Engine, Agent Runtime, Agent Optimizer, branded Google evaluation services, clinical validation, or statistical significance.

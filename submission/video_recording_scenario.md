@@ -4,6 +4,17 @@ Target length: 1:45-1:55. Hard cap: 2:00. Record in English, or add English subt
 
 Core message: the agent does not invent a stage; it surfaces uncertainty and forces clinician reconciliation.
 
+## Background and Technical Emphasis
+
+The video should quickly answer four questions before the first two minutes end:
+
+- What this is: a Track 2 Optimize reliability slice for an existing oncology documentation product.
+- What was measured: 15 synthetic cases, 3 temperature-0 runs per case, 8 held-out test cases, a gold-grounded primary grader, and deterministic rule cross-checks.
+- What the live run proves: the agent reads conflicting source documents, surfaces the staging discrepancy, passes QC, and passes generated-output scrubbing before the note is shown.
+- What the architecture proves: ADK orchestration, Gemini on Vertex AI, MCP data-tool boundary, Cloud Run deployment, public NCI PDQ grounding, and a public/private IP firewall.
+
+Useful Track 2 phrasing: the synthetic fixtures are the simulation layer, the held-out harness is the evaluation layer, and the structured `CaseRun` trace is the observability layer.
+
 ## Pre-Recording Setup
 
 Use a clean browser profile or a window with no unrelated tabs. Hide bookmarks if they contain private context. Browser zoom: 110-125 percent. Record at 1080p or higher.
@@ -34,40 +45,35 @@ Do not show proprietary prompts, private backend code, real PHI, service-account
 
 | Time | Screen | Action | Narration |
 |---|---|---|---|
-| 0:00-0:11 | Demo home page | Start on the app header. Keep "Track 2 Optimize", "Gemini on Vertex AI", "ADK + MCP", and "synthetic oncology cases" visible. | "This is Notatnik Medyczny for Track 2 Optimize, a reliability slice for an existing oncology documentation product. The public demo uses synthetic cases only." |
-| 0:11-0:25 | `reliability_delta.md` | Show headline and held-out table. Cursor can briefly point to `+0.115` and the QC-loop held-out row. | "Prompt optimization improved held-out source-grounded reliability by plus 0.115. The QC loop is targeted, not uniformly better, and a synthetic PII regression led to deterministic generated-output scrubbing." |
-| 0:25-0:38 | Demo home page | Return to demo. Show `CASE-003` selected. Do not run yet. | "Our live case is a rectal-cancer staging conflict: MRI says cT2 N0, but the MDT note says cT3 N1. Instead of silently picking one, the agent surfaces the conflict." |
-| 0:38-0:49 | Demo controls | Point to Evidence unchecked, then click Run. | "We disable evidence retrieval here for speed. Judges can enable it with this checkbox; the ADK and MCP boundaries remain visible in the trace." |
-| 0:49-1:04 | Demo result | If the run takes more than 5 seconds, use one clean jump cut after showing "Running Vertex agent..." and continue on the same result. Show metrics row. | "The documentation agent drafts, the QC agent audits, and the loop passes once the contradiction is visible. This run self-corrected, passing QC and output scrubbing." |
-| 1:04-1:14 | After panel | Highlight the TNM stage line containing `[DISCREPANCY]`, `cT2 N0`, and `cT3 N1`. | "The final note does not invent a stage. It states the discrepancy: cT2 N0 versus cT3 N1, requiring clinician reconciliation." |
-| 1:14-1:26 | ADK Trace, then `/health` | Show tool calls in the trace briefly, then switch to `/health`. Point to `"model": "gemini-3.1-flash-lite"`, `"location": "global"`, and `"cases"`. | "The service runs on Cloud Run with FastAPI. The health check shows the pinned Gemini model, project, global location, and synthetic case count." |
-| 1:26-1:38 | `architecture.svg` | Show the diagram. Move left to right: judge, Cloud Run, ADK, Vertex/MCP, synthetic data/PDQ, scrub. | "Under the hood are ADK agents, Gemini on Vertex, data tools over MCP, synthetic fixtures, public NCI PDQ grounding, and deterministic output scrubbing." |
-| 1:38-1:47 | `business_one_pager.md` ROI table | Show annual time released and EUR value range. | "The business wedge: reduce repetitive documentation time, make staging uncertainty visible, and keep physicians in the loop." |
-| 1:47-1:55 | Demo home page or closing slide | End on app or URLs after final deploy/push. | "Our learning: prompt optimization generalized; multi-agent QC is targeted; and deterministic safety scrubbing is required." |
+| 0:00-0:13 | Demo home page | Start on the app header. Keep "Track 2 Optimize", "Gemini on Vertex AI", "ADK + MCP", and "synthetic oncology cases" visible. | "This is Notatnik Medyczny's Google AI Agents Challenge submission for Track 2 Optimize: an ADK reliability slice for an existing oncology documentation product. This public version is self-contained and synthetic only; production prompts, recognizers, and patient data stay outside the repo." |
+| 0:13-0:31 | `reliability_delta.md` | Show Evaluation setup, headline, and held-out test contrasts. Cursor highlights 15 cases, 8 held-out cases, `+0.115`, and `E-PII-02`. | "The evaluation used 15 synthetic cases, three temperature-zero runs per case, and an eight-case held-out split. A gold-grounded LLM grader, checked for style neutrality, showed prompt optimization improved held-out reliability by plus 0.115. The honest negative: the QC loop reintroduced synthetic identifiers on E-PII-02, so the service now adds deterministic output scrubbing." |
+| 0:31-0:45 | Demo home page | Return to demo. Show `CASE-003` selected and briefly point to the source preview: MRI (`cT2 N0`) vs MDT (`cT3 N1`). Do not run yet. | "Case-003 is the live test. The source documents conflict: MRI says cT2 N0, while the MDT note says cT3 N1. A safe documentation agent should not silently choose one." |
+| 0:45-1:03 | Demo controls & run | Point to Evidence unchecked, then click Run. Show "Running Vertex agent..." and use one jump cut if needed. | "We leave evidence retrieval off for speed. When I click Run, ADK orchestrates a documentation agent and a QC LoopAgent. The QC agent rechecks source data through MCP tools, and the response is released only after QC and scrub status pass." |
+| 1:03-1:18 | Demo result / After panel | Show metrics row (QC passed, self-corrected, generated scrub PASS), then highlight the discrepancy line. | "Here the final note preserves the discrepancy: cT2 N0 versus cT3 N1, requiring physician reconciliation. That is the core reliability behavior." |
+| 1:18-1:30 | `/health` endpoint | Switch to `/health`. Point to `"model": "gemini-3.1-flash-lite"`, `"location": "global"`, `"cases": 18`, and `"pdq_index_available": true`. | "The health tab is the deployment receipt: FastAPI on Cloud Run, Gemini 3.1 Flash Lite through Vertex AI at global location, 18 synthetic cases loaded, and the PDQ grounding index present." |
+| 1:30-1:45 | `architecture.svg` | Show the diagram. Move left to right: Cloud Run, ADK loop, Vertex Gemini, MCP stdio boundary, synthetic fixtures, NCI PDQ, scrub. | "The architecture shows the Track 2 mapping: fixtures are simulation, the held-out harness is evaluation, and the CaseRun trace is observability. MCP is the data boundary, with public NCI PDQ grounding and no private clinical IP in the public artifact." |
+| 1:45-1:55 | `business_one_pager.md` / Close | Show ROI table. End on final slide/URLs. | "The business wedge is radiation oncology documentation: save repetitive note time, make uncertainty visible, and keep physicians in the approval loop. Prompt optimization generalized; multi-agent QC was targeted; deterministic safety mitigation was necessary." |
 
 ## Exact Narration Script
 
 Use this if reading from a teleprompter:
 
-"This is Notatnik Medyczny for Track 2 Optimize, a reliability slice for an existing oncology documentation product. The public demo uses synthetic cases only.
+"This is Notatnik Medyczny's Google AI Agents Challenge submission for Track 2 Optimize: an ADK reliability slice for an existing oncology documentation product. This public version is self-contained and synthetic only; production prompts, recognizers, and patient data stay outside the repo.
 
-Prompt optimization improved held-out source-grounded reliability by plus 0.115. The QC loop is targeted, not uniformly better, and a synthetic PII regression led to deterministic generated-output scrubbing.
+The evaluation used 15 synthetic cases, three temperature-zero runs per case, and an eight-case held-out split. A gold-grounded LLM grader, checked for style neutrality, showed prompt optimization improved held-out reliability by plus 0.115. The honest negative: the QC loop reintroduced synthetic identifiers on E-PII-02, so the service now adds deterministic output scrubbing.
 
-Our live case is a rectal-cancer staging conflict: MRI says cT2 N0, but the MDT note says cT3 N1. Instead of silently picking one, the agent surfaces the conflict.
+Case-003 is the live test. The source documents conflict: MRI says cT2 N0, while the MDT note says cT3 N1. A safe documentation agent should not silently choose one.
 
-We disable evidence retrieval here for speed. Judges can enable it with this checkbox; the ADK and MCP boundaries remain visible in the trace.
+We leave evidence retrieval off for speed. When I click Run, ADK orchestrates a documentation agent and a QC LoopAgent. The QC agent rechecks source data through MCP tools, and the response is released only after QC and scrub status pass.
 
-The documentation agent drafts, the QC agent audits, and the loop passes once the contradiction is visible. This run self-corrected, passing QC and output scrubbing.
+Here the final note preserves the discrepancy: cT2 N0 versus cT3 N1, requiring physician reconciliation. That is the core reliability behavior.
 
-The final note does not invent a stage. It states the discrepancy: cT2 N0 versus cT3 N1, requiring clinician reconciliation.
+The health tab is the deployment receipt: FastAPI on Cloud Run, Gemini 3.1 Flash Lite through Vertex AI at global location, 18 synthetic cases loaded, and the PDQ grounding index present.
 
-The service runs on Cloud Run with FastAPI. The health check shows the pinned Gemini model, project, global location, and synthetic case count.
+The architecture shows the Track 2 mapping: fixtures are simulation, the held-out harness is evaluation, and the CaseRun trace is observability. MCP is the data boundary, with public NCI PDQ grounding and no private clinical IP in the public artifact.
 
-Under the hood are ADK agents, Gemini on Vertex, data tools over MCP, synthetic fixtures, public NCI PDQ grounding, and deterministic output scrubbing.
+The business wedge is radiation oncology documentation: save repetitive note time, make uncertainty visible, and keep physicians in the approval loop. Prompt optimization generalized; multi-agent QC was targeted; deterministic safety mitigation was necessary."
 
-The business wedge: reduce repetitive documentation time, make staging uncertainty visible, and keep physicians in the loop.
-
-Our learning: prompt optimization generalized; multi-agent QC is targeted; and deterministic safety scrubbing is required."
 
 ## Editing Rules
 
@@ -78,6 +84,8 @@ Our learning: prompt optimization generalized; multi-agent QC is targeted; and d
 - If any run fails, do not record around it. Fix the service or use the last verified working deployment.
 - If Self-corrected shows no but the note still surfaces the discrepancy, do not say "self-corrected." Replace that sentence with: "The run passes QC and output scrubbing, and the final note makes the contradiction visible."
 - If evidence is enabled during a later take, say so clearly and budget extra time. The default recommended recording keeps Evidence unchecked.
+- Do not claim use of Agent Engine, Agent Runtime, Agent Optimizer, or branded Google evaluation services unless those artifacts are actually added.
+- Do not claim statistical significance, clinical validation, autonomous treatment decisions, or production medical-device readiness.
 
 ## Required Final Frame
 
