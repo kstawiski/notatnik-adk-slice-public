@@ -71,6 +71,24 @@
         max-width: 620px;
       }
       .sub b { color: var(--ink); }
+      .brand-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 12px;
+        margin-top: 10px;
+        color: var(--teal-dark);
+        font-size: 12px;
+        font-weight: 720;
+      }
+      .brand-meta span + span::before {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        margin: 0 12px 2px 0;
+        border-radius: 50%;
+        background: #9db9b4;
+      }
       .brand, .controls, .field {
         min-width: 0;
       }
@@ -448,6 +466,11 @@
           <div class="brand-kicker">Track 2 Optimize / synthetic cases only</div>
           <h1>Notatnik Medyczny</h1>
           <div class="sub"><b>ADK Reliability Slice.</b> Source documents move through a documentation/QC loop into a scrubbed, source-grounded oncology note.</div>
+          <div class="brand-meta" aria-label="Platform summary">
+            <span>Gemini on Vertex AI</span>
+            <span>ADK + MCP</span>
+            <span>Cloud Run judge demo</span>
+          </div>
         </div>
         <div class="controls" aria-label="Run controls">
           <label class="field">
