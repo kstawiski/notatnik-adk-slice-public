@@ -8,11 +8,11 @@ Devpost-required asset fields observed on the project edit page: `Video*`, `Code
 
 | ID | Artifact | Status | Evidence / next action |
 |---|---|---|---|
-| A1 | Public Cloud Run demo URL | BLOCKED | Local C6 service green; deploy requires explicit user approval. Fill `PASTE_CLOUD_RUN_URL_AFTER_APPROVED_DEPLOY`. |
+| A1 | Public Cloud Run demo URL | READY | https://notatnik-adk-slice-307066208186.europe-west1.run.app. Live smoke on 2026-06-05: `/health` OK, `/cases` has 18 cases and pre-run CASE-003 source preview, `CASE-003` QC PASS/self-corrected/generated scrub PASS with `[DISCREPANCY] cT2 N0 vs cT3 N1`. |
 | A2 | 1-2 min video | TODO | `video_storyboard.md` is ready; record, upload, paste URL. |
 | A3 | Architecture diagram | READY | `architecture.svg`, `architecture.mmd`. |
 | A4 | Public/judge-accessible code URL | READY | Code folder URL: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d; direct download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download. Code package QA: one root commit, no raw eval trace, no raw `agents/evidence/`, strict secret/key scan clean, tests and Docker smoke green. |
-| A5 | Devpost write-up | DRAFT READY | `devpost_writeup.md`; code URL is filled; fill demo and video URLs after final actions. |
+| A5 | Devpost write-up | DRAFT READY | `devpost_writeup.md`; demo and code URLs are filled; fill video URL after upload. |
 | A6 | Business one-pager | READY | `business_one_pager.md`. |
 | A7 | Reliability delta table | READY | `reliability_delta.md`; C4 reliability profile finalized. |
 | A8 | Auditable eval package | READY | `eval/` plus C4 report/output artifacts. |
@@ -23,9 +23,8 @@ Devpost-required asset fields observed on the project edit page: `Video*`, `Code
 
 ## Hard Blockers Before Public Submission
 
-1. User-approved Cloud Run deploy and smoke test of public URL.
-2. Video recorded/uploaded.
-3. Devpost final fields completed and Submit clicked.
+1. Video recorded/uploaded.
+2. Devpost final fields completed and Submit clicked.
 
 Code access is available as a public folder share. If Devpost rejects a folder/share link and requires a repository-style URL, create a public remote from `adk-slice-public/` and replace the code URL before final submission.
 
@@ -41,6 +40,7 @@ Code access is available as a public folder share. If Devpost rejects a folder/s
 - C6 Docker: build, image inventory, and container smoke green.
 - C6 plausibility/safety floor: deterministic floor PASS; no residual identifiers after generated-output scrub probes.
 - Public package QA: one root commit, raw C4 `runs.jsonl` excluded, tracked demo traces removed, targeted forbidden/secret scan clean, public-export tests and Docker/container smoke green.
+- Public Cloud Run: revision `notatnik-adk-slice-00003-wxg` deployed in `europe-west1` with maxScale=2/minScale=0; live `/health`, `/cases`, first-screen UI, and `CASE-003` smoke green.
 
 ## Final QA Scan To Run After User-Gated Actions
 

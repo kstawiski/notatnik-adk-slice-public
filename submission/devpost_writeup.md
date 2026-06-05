@@ -21,14 +21,14 @@ Key optimization result: prompt optimization improved held-out source-grounded r
 
 ## Testing Access
 
-Fill remaining URLs after approval, deploy, and video upload:
+Use these testing links:
 
-- Demo URL: `PASTE_CLOUD_RUN_URL_AFTER_APPROVED_DEPLOY`
+- Demo URL: https://notatnik-adk-slice-307066208186.europe-west1.run.app
 - Source code folder: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d
 - Direct code download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download
 - Video URL: `PASTE_VIDEO_URL`
 
-The local service is already verified at `http://127.0.0.1:8080` with `MOCK_MODE=true` and `GROUNDING_PDQ=1`. Do not paste the local URL into Devpost.
+The public Cloud Run service was smoke-tested on 2026-06-05 with `/health`, `/cases`, first-screen CASE-003 source preview, and `CASE-003` (`include_evidence=false`). Do not paste local service URLs into Devpost.
 
 ## Problem
 
@@ -128,6 +128,6 @@ The optimization story is also deliberately honest: the submitted project does n
 - Region: EMEA
 - Theme/Track: Optimize
 - Status: Pending until Devpost Submit click
-- Testing access URL: fill after approved Cloud Run deploy
+- Testing access URL: https://notatnik-adk-slice-307066208186.europe-west1.run.app
 - Video URL: fill after upload
 - Code URL: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d

@@ -2,18 +2,19 @@
 
 Working package for the Google for Startups AI Agents Challenge submission.
 
-Status as of 2026-06-04:
+Status as of 2026-06-05:
 
 - Track: Optimize
 - Region: EMEA
 - Entrant: Radioonkolog.pl / Konrad Stawiski
-- Public demo: local C6 service is green; Cloud Run deploy is pending explicit user approval.
+- Public demo: Cloud Run is live at https://notatnik-adk-slice-307066208186.europe-west1.run.app.
+  Live smoke is green for `/health`, `/cases`, first-screen CASE-003 source preview, and `CASE-003` with evidence off.
 - Code: public/judge-accessible folder ready at https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d.
   Direct download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download.
   Export QA is green: one root commit, raw traces absent, strict secret/key scan clean, tests
   and Docker/container smoke passed.
 - Video: storyboard is ready; recording/upload still needs to happen.
-- Devpost: write-up draft is ready; final URL fields and Submit click remain.
+- Devpost: write-up draft is ready with demo/code URLs filled; video URL and Submit click remain.
 
 Artifacts:
 
@@ -25,4 +26,4 @@ Artifacts:
 - `trace_notes.md` - redacted trace/observability notes for screenshots or Devpost.
 - `final_checklist.md` - submission status, blockers, and approval-gated actions.
 
-Do not publish or submit until `final_checklist.md` has no open blocker rows.
+Do not submit until `final_checklist.md` has no open blocker rows.

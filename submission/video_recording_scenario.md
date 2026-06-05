@@ -83,7 +83,7 @@ Our learning: prompt optimization generalized; multi-agent QC is targeted; and d
 
 After public deploy, end on a clean screen or slide with:
 
-- Demo URL: `PASTE_CLOUD_RUN_URL_AFTER_APPROVED_DEPLOY`
+- Demo URL: `https://notatnik-adk-slice-307066208186.europe-west1.run.app`
 - Code URL: `https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d`
 - Data note: synthetic cases only; no real PHI
 
