@@ -16,7 +16,7 @@ Reliability categories exercised:
   pii_leak     prominent name/ID in source                   (summary must de-identify)
   faithfulness hedged/uncertain source                       (must not over-state)
 
-Run:  python eval/cases/build_cases.py
+Run:  python3 eval/cases/build_cases.py
 """
 from __future__ import annotations
 

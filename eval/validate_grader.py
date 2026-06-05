@@ -7,7 +7,7 @@ corrupted on exactly ONE dimension scores low on exactly that dimension. This su
 defensibility of the LLM-grader-primary pivot — it is a *verification* task against the gold ground
 truth, not free opinion. Real Vertex calls (pinned MODEL_ID). Synthetic drafts only.
 
-Run: python eval/validate_grader.py   (writes pass/fail per probe to stdout)
+Run: python3 eval/validate_grader.py   (writes pass/fail per probe to stdout)
 """
 from __future__ import annotations
 import asyncio, sys

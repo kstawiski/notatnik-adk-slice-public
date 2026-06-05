@@ -24,9 +24,9 @@ is kept gitignored under `pdq_raw/` and is **never** committed.
 
 Reproduce:
 ```
-python grounding/clean_corpus.py                         # pdq_raw/corpus_raw -> corpus + manifest
+python3 grounding/clean_corpus.py                        # pdq_raw/corpus_raw -> corpus + manifest
 GOOGLE_CLOUD_PROJECT=… GOOGLE_CLOUD_LOCATION=global \
-  python grounding/build_index.py                        # corpus -> committed index
+  python3 grounding/build_index.py                       # corpus -> committed index
 ```
 
 ## Provenance

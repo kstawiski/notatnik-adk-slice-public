@@ -166,7 +166,7 @@ The per-run authoritative tables are in each run's `report.md`; the durable conc
 ## Run
 
 ```bash
-pip install -r eval/requirements-eval.txt && python -m spacy download en_core_web_lg
-python eval/tests/test_scorers.py        # deterministic cross-check unit tests (no LLM)
-python eval/harness.py --runs 3          # full eval on Vertex -> outputs/ + summary.json
+pip install -r eval/requirements-eval.txt && python3 -m spacy download en_core_web_lg
+python3 eval/tests/test_scorers.py        # deterministic cross-check unit tests (no LLM)
+python3 eval/harness.py --runs 3          # full eval on Vertex -> outputs/ + summary.json
 ```

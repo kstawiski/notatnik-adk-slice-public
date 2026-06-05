@@ -5,7 +5,7 @@ This is a genuine Model Context Protocol server (stdio transport), not function 
 labeled "MCP": the ADK slice consumes it via an MCP client/toolset (C3). It serves DATA only
 (synthetic in MOCK_MODE) — never LLM generation, which stays in the ADK agents on Vertex.
 
-Run standalone:  python mcp_server/server.py   (speaks MCP over stdio)
+Run standalone:  python3 mcp_server/server.py   (speaks MCP over stdio)
 """
 from __future__ import annotations
 

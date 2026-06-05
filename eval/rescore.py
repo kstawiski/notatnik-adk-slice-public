@@ -7,7 +7,7 @@ The PRIMARY metric (the gold-grounded LLM grader composite) and the recorded jud
 AS-IS from the original run (re-running the grader would need fresh Vertex calls). Writes
 summary_rescored.json next to the input.
 
-Run:  python eval/rescore.py eval/outputs/<run_dir>
+Run:  python3 eval/rescore.py eval/outputs/<run_dir>
 """
 from __future__ import annotations
 

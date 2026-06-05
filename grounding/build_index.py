@@ -4,7 +4,7 @@ Deterministic given the pinned embedding model (retriever.EMBED_MODEL). Run once
 whenever the corpus changes:
 
   GOOGLE_CLOUD_PROJECT=gen-lang-client-0384080704 GOOGLE_CLOUD_LOCATION=global \\
-  python grounding/build_index.py
+  python3 grounding/build_index.py
 
 Writes (committed, ship in the image):
   pdq_index.npz        float32 [N, 768] embeddings, key "vectors"

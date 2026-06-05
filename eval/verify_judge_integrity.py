@@ -16,7 +16,7 @@ judge gaps do not change any reported judge number, by checking three properties
 P1 & P2 & P3 together => the judge means/deltas are bit-for-bit what they would be with zero gaps.
 This is an audit of an EXISTING run; it makes no Vertex calls and changes no data. Read-only.
 
-Run:  python eval/verify_judge_integrity.py eval/outputs/<run_dir>
+Run:  python3 eval/verify_judge_integrity.py eval/outputs/<run_dir>
 """
 from __future__ import annotations
 

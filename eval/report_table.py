@@ -7,8 +7,8 @@ primary numbers — it only reshapes saved outputs. The narrative is written to 
 result and to disclose the two honest negatives (the QC loop's held-out PHI re-introduction and its
 train-concentrated contradiction gain), per the C4 results-review.
 
-Run:  python eval/report_table.py eval/outputs/<run_dir>            # -> stdout
-      python eval/report_table.py eval/outputs/<run_dir> --out eval/outputs/<run_dir>/report.md
+Run:  python3 eval/report_table.py eval/outputs/<run_dir>            # -> stdout
+      python3 eval/report_table.py eval/outputs/<run_dir> --out eval/outputs/<run_dir>/report.md
 """
 from __future__ import annotations
 

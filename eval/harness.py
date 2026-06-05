@@ -12,7 +12,7 @@ The optimizer (scripted instruction-tuning, NOT the Vertex Prompt Optimizer serv
 generic instruction augmentations on the TRAIN split; Δ2 is reported on the held-out TEST split.
 n ≥ 3 @ temp 0; spread reported. With 15 cases NO statistical significance is claimed.
 
-Run:  python eval/harness.py --runs 3
+Run:  python3 eval/harness.py --runs 3
 """
 from __future__ import annotations
 

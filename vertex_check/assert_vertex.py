@@ -12,7 +12,7 @@ Proves the agent's reasoning genuinely runs on **Vertex AI** (`aiplatform`), not
 
 Run:
   GOOGLE_CLOUD_PROJECT=gen-lang-client-0384080704 GOOGLE_CLOUD_LOCATION=global \
-  python vertex_check/assert_vertex.py
+  python3 vertex_check/assert_vertex.py
 """
 from __future__ import annotations
 

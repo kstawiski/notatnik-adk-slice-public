@@ -4,5 +4,5 @@
 # never the proprietary Polish recognizer used outside this public demo.
 presidio_analyzer==2.2.359
 spacy==3.8.13
-# spaCy model (install with: python -m spacy download en_core_web_lg):
+# spaCy model (install with: python3 -m spacy download en_core_web_lg):
 en_core_web_lg==3.8.0

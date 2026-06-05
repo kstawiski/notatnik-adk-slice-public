@@ -14,7 +14,7 @@ Pipeline (reproducible, idempotent):
   corpus/<slug>.txt              (committed; public-domain prose only)
   manifest.json                  (chars + sha256 recomputed for the cleaned files)
 
-Run:  python grounding/clean_corpus.py
+Run:  python3 grounding/clean_corpus.py
 Fails closed: aborts if any rights marker survives in the cleaned corpus.
 """
 from __future__ import annotations

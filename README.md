@@ -7,7 +7,7 @@ layer only — no clinical IP. Synthetic data only.
 ## Layout
 
 - `vertex_check/` — C1 green-assertion: proves reasoning runs on Vertex (`aiplatform`), not
-  AI Studio. Run: `python vertex_check/assert_vertex.py` (see `evidence/`).
+  AI Studio. Run: `python3 vertex_check/assert_vertex.py` (see `evidence/`).
 - `tools/` + `mcp_server/` — C2: deterministic synthetic DATA tools (`MOCK_MODE` default,
   no DB/GPU/network) exposed over a real **MCP** stdio server. The judged artifact runs
   entirely on these fixtures.
