@@ -51,3 +51,32 @@ URL="$(gcloud run services describe notatnik-adk-slice --project "$PROJECT" --re
 curl -fsS "$URL/health"
 curl -fsS "$URL/cases" | head
 ```
+
+Pause public access after judging:
+
+```bash
+PROJECT=gen-lang-client-0384080704 REGION=europe-west1 SERVICE=notatnik-adk-slice \
+  bash deploy/stop-cloud-run.sh
+```
+
+This does not delete the service, revision, or container image. It sets ingress to internal,
+keeps `min-instances=0`, and removes public invoker IAM bindings so idle compute stays at zero
+and the public URL no longer serves judge traffic.
+
+Resume public access later:
+
+```bash
+PROJECT=gen-lang-client-0384080704 REGION=europe-west1 SERVICE=notatnik-adk-slice \
+  bash deploy/resume-cloud-run.sh
+```
+
+The resume script restores public ingress, restores the `allUsers` invoker binding, keeps
+`min-instances=0`, caps `max-instances` at 2 by default, and smoke-checks `/health`.
+Override `MAX_INSTANCES=1` or `SMOKE=0` if needed.
+
+Check current state:
+
+```bash
+PROJECT=gen-lang-client-0384080704 REGION=europe-west1 SERVICE=notatnik-adk-slice \
+  bash deploy/cloudrun-status.sh
+```
