@@ -62,6 +62,6 @@ The pricing implication is straightforward: even a modest per-clinician subscrip
 3. Polish oncology practices and clinics with documentation-heavy workflows.
 4. EMEA oncology centers that need documentation efficiency without autonomous clinical decision-making.
 
-## What Judges Should Remember
+## Commercial Summary
 
 This is a credible B2B healthcare wedge: a practicing oncologist has built the product, the demo focuses on a measured reliability problem, and the architecture protects both patients and clinical IP.

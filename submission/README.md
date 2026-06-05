@@ -19,7 +19,7 @@ Status as of 2026-06-05:
 
 Artifacts:
 
-- `devpost_writeup.md` - Devpost text fields and final paste-ready narrative.
+- `devpost_writeup.md` - Devpost text fields and submission narrative.
 - `business_one_pager.md` - business case and ROI model.
 - `reliability_delta.md` - reviewed C4 result narrative and tables.
 - `architecture.svg` and `architecture.mmd` - architecture diagram assets.

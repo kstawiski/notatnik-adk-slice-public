@@ -12,7 +12,7 @@ Evaluation setup:
 - Cross-check: deterministic rule score.
 - Descriptive reliability profile only; no significance claim at n=15.
 
-## Headline for Devpost / Video
+## Reliability Summary
 
 Prompt optimization is the robust held-out win. The +0.115 held-out single-agent gain is a transfer result from prompts selected on the multi-agent training composite, with a style-neutrality-validated grader as the primary metric. The multi-agent QC loop is useful but targeted; it can surface contradictions, but it also introduced a safety regression on one held-out synthetic PII case. C6 adds deterministic generated-output scrubbing to mitigate that measured failure.
 
@@ -36,26 +36,8 @@ Important qualifier: multi optimized is best all-case, but this includes trainin
 | prompt optimization, single | +0.115 | +0.098 | -0.037 | 8 | 2 up / 0 down / 6 tied |
 | combined worst to best | +0.073 | +0.056 | -0.037 | 8 | 2 up / 0 down / 6 tied |
 
-## Demo Anchors
+## Representative Cases
 
 - `E-CON-04`: baseline fabricated melanoma stage `pT2b`; optimized prompt correctly surfaced a missing TNM stage instead of inventing one.
 - `CASE-003`: live service demo surfaces conflicting rectal-cancer stages rather than choosing one.
 - `E-PII-02`: QC loop reintroduced synthetic identifiers; C6 mitigates with deterministic generated-output scrub.
-
-## Language to Use
-
-Use:
-
-- "descriptive reliability profile"
-- "held-out improvement"
-- "gold-grounded primary metric"
-- "the QC loop is targeted, not uniformly better"
-- "measured safety regression, then deterministic mitigation"
-
-Avoid:
-
-- "statistically significant"
-- "clinically validated"
-- "autonomous treatment decision"
-- "production-grade medical device"
-- "Agent Optimizer" unless a branded Google optimizer artifact is actually used
