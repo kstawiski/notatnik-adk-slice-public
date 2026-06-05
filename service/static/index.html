@@ -94,8 +94,8 @@
       }
       .controls {
         display: grid;
-        grid-template-columns: minmax(220px, 0.95fr) minmax(260px, 1.05fr) auto minmax(136px, auto);
-        align-items: center;
+        grid-template-columns: minmax(220px, 1fr) auto minmax(136px, auto);
+        align-items: end;
         gap: 10px;
         justify-content: stretch;
         background: #fbfcfb;
@@ -107,6 +107,9 @@
       .field {
         display: grid;
         gap: 4px;
+      }
+      .token-field {
+        grid-column: 1 / -1;
       }
       .field > span {
         color: var(--muted);
@@ -159,7 +162,7 @@
       }
       .token-row {
         display: grid;
-        grid-template-columns: minmax(120px, 1fr) auto;
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 6px;
       }
       .mode-badge {
@@ -177,6 +180,10 @@
         align-self: end;
         grid-column: 1 / -1;
         justify-self: end;
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        text-align: center;
       }
       .mode-badge.mock {
         border-color: #ead59b;
@@ -518,10 +525,13 @@
       #status {
         color: var(--muted);
         font-size: 13px;
-        min-width: 116px;
+        min-width: 0;
+        max-width: 100%;
         align-self: end;
         grid-column: 1 / -1;
         justify-self: end;
+        overflow-wrap: anywhere;
+        text-align: right;
       }
       @keyframes railMove {
         from { background-position: 0 0; }
@@ -575,18 +585,18 @@
             <span>Synthetic case</span>
             <select id="caseSelect" aria-label="Synthetic case"></select>
           </label>
-          <label class="field">
+          <label class="toggle">
+            <input id="evidenceToggle" type="checkbox" />
+            Evidence
+          </label>
+          <button id="runBtn" type="button">Run ADK loop</button>
+          <label class="field token-field">
             <span>Testing access token</span>
             <span class="token-row">
               <input id="tokenInput" type="password" autocomplete="off" placeholder="Paste token for real run" aria-label="Testing access token" />
               <button id="applyTokenBtn" class="secondary" type="button">Apply</button>
             </span>
           </label>
-          <label class="toggle">
-            <input id="evidenceToggle" type="checkbox" />
-            Evidence
-          </label>
-          <button id="runBtn" type="button">Run ADK loop</button>
           <span id="modeBadge" class="mode-badge mock">Mock mode - no token</span>
           <span id="status">Loading cases...</span>
         </div>
