@@ -23,4 +23,3 @@ Artifacts:
 - `business_one_pager.md` - business case and ROI model.
 - `reliability_delta.md` - reviewed C4 result narrative and tables.
 - `architecture.svg` and `architecture.mmd` - architecture diagram assets.
-- `trace_notes.md` - redacted trace/observability notes for screenshots or review.

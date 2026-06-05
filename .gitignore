@@ -7,4 +7,9 @@ grounding/pdq_raw/
 .pytest_cache/
 triple_consensus_logs/
 agents/evidence/
+vertex_check/evidence/
+submission/trace_notes.md
+submission/video_recording_scenario.md
+submission/video_storyboard.md
+submission/final_checklist.md
 output_audit.txt
