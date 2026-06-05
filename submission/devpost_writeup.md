@@ -27,8 +27,8 @@ Use these testing links:
 
 - Demo URL: https://notatnik-adk-slice-6fjc6wlk6a-ew.a.run.app
 - Source code repository: https://github.com/kstawiski/notatnik-adk-slice-public
-- Backup code folder: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d
-- Direct code download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download
+- Backup code package: https://chmura.radioonkolog.pl/s/NxrPJSQrceQtm2L
+- Direct package download: https://chmura.radioonkolog.pl/s/NxrPJSQrceQtm2L/download
 - Video URL: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k
 - Direct video download: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k/download
 

@@ -10,8 +10,8 @@ Status as of 2026-06-05:
 - Public demo: Cloud Run is live at https://notatnik-adk-slice-6fjc6wlk6a-ew.a.run.app.
   Live smoke is green for `/health`, `/cases`, first-screen CASE-003 source preview, and `CASE-003` with evidence off.
 - Code: public/judge-accessible repository ready at https://github.com/kstawiski/notatnik-adk-slice-public.
-  Backup folder: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d.
-  Direct download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download.
+  Backup package: https://chmura.radioonkolog.pl/s/NxrPJSQrceQtm2L.
+  Direct package download: https://chmura.radioonkolog.pl/s/NxrPJSQrceQtm2L/download.
   Export QA is green: one root commit, raw traces absent, strict secret/key scan clean, tests
   and Docker/container smoke passed.
 - Video: captioned Chrome browser-flow take is uploaded at https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k.
