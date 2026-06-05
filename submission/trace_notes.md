@@ -12,7 +12,7 @@ Request:
 {"case_id":"CASE-003","max_iterations":4,"include_evidence":false}
 ```
 
-Observed local service result on 2026-06-04:
+Observed live Cloud Run result on 2026-06-05 (`notatnik-adk-slice-00008-fwz`):
 
 ```json
 {
