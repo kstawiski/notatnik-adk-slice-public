@@ -25,7 +25,7 @@ Key optimization result: prompt optimization improved held-out source-grounded r
 
 Use these testing links:
 
-- Demo URL: https://notatnik-adk-slice-307066208186.europe-west1.run.app
+- Demo URL: https://notatnik-adk-slice-6fjc6wlk6a-ew.a.run.app
 - Source code repository: https://github.com/kstawiski/notatnik-adk-slice-public
 - Backup code folder: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d
 - Direct code download: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d/download
@@ -136,6 +136,6 @@ The optimization story is also deliberately honest: the submitted project does n
 - Region: EMEA
 - Theme/Track: Optimize
 - Status: Challenge submission package
-- Testing access URL: https://notatnik-adk-slice-307066208186.europe-west1.run.app/?token=<paste-token-in-Devpost-notes>
+- Testing access URL: https://notatnik-adk-slice-6fjc6wlk6a-ew.a.run.app/?token=<paste-token-from-Devpost-notes>
 - Video URL: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k
 - Code URL: https://github.com/kstawiski/notatnik-adk-slice-public

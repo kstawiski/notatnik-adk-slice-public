@@ -7,7 +7,7 @@ Status as of 2026-06-05:
 - Track: Optimize
 - Region: EMEA
 - Entrant: Radioonkolog.pl / Konrad Stawiski
-- Public demo: Cloud Run is live at https://notatnik-adk-slice-307066208186.europe-west1.run.app.
+- Public demo: Cloud Run is live at https://notatnik-adk-slice-6fjc6wlk6a-ew.a.run.app.
   Live smoke is green for `/health`, `/cases`, first-screen CASE-003 source preview, and `CASE-003` with evidence off.
 - Code: public/judge-accessible repository ready at https://github.com/kstawiski/notatnik-adk-slice-public.
   Backup folder: https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d.
