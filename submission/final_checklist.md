@@ -40,7 +40,7 @@ Code access is available as a public folder share. If Devpost rejects a folder/s
 - C6 Docker: build, image inventory, and container smoke green.
 - C6 plausibility/safety floor: deterministic floor PASS; no residual identifiers after generated-output scrub probes.
 - Public package QA: one root commit, raw C4 `runs.jsonl` excluded, tracked demo traces removed, targeted forbidden/secret scan clean, public-export tests and Docker/container smoke green.
-- Public Cloud Run: revision `notatnik-adk-slice-00003-wxg` deployed in `europe-west1` with maxScale=2/minScale=0; live `/health`, `/cases`, first-screen UI, and `CASE-003` smoke green.
+- Public Cloud Run: revision `notatnik-adk-slice-00005-w85` deployed in `europe-west1` with maxScale=2/minScale=0; live `/health`, `/cases`, Chrome first-screen visual check, and Chrome `CASE-003` UI run smoke green.
 
 ## Final QA Scan To Run After User-Gated Actions
 
