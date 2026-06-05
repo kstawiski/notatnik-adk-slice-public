@@ -57,6 +57,8 @@ The default demo case (`CASE-003`) is a rectal-cancer staging conflict. The agen
 - Cloud Run target: a FastAPI judge UI/API packaged by Docker, using a runtime service account with Vertex AI permissions.
 - Grounding: committed public NCI PDQ treatment-summary corpus and embedding index for local guideline retrieval; the demo does not depend on a private database, private search service, or production Notatnik runtime.
 
+Track 2 optimization mapping: the synthetic oncology fixtures act as the agent-simulation layer, the held-out C4 harness is the agent-evaluation layer, and the structured `CaseRun` trace (`doc_drafts`, `qc_rejections`, `qc_passed`, tool calls, and scrub status) is the public observability layer. We kept these pieces self-contained to preserve clinical IP isolation, deterministic temperature-0 reproducibility, and gold-grounded grading for oncology documentation failures.
+
 ## Data Sources and Rights
 
 - Patient cases: invented synthetic oncology fixtures. No real PHI is present.
@@ -73,7 +75,7 @@ The +0.115 held-out single-agent gain is a transfer result from prompts selected
 Held-out headline:
 
 - Prompt optimization is the robust generalizing win: single-agent optimized improved by +0.115 primary / +0.098 rule on held-out cases.
-- The optimized single-agent arm reached 1.000 on held-out primary score.
+- On this small synthetic held-out split, the optimized single-agent arm reached 1.000 on the primary score.
 - The multi-agent QC loop is targeted rather than uniformly better: it improved contradiction cases in training, but did not generalize on held-out cases and regressed one held-out synthetic PII case.
 - C6 therefore keeps the C4 negative result honest and adds deterministic generated-output scrubbing as the indicated mitigation.
 

@@ -4,5 +4,6 @@ google-adk==2.1.0
 google-cloud-aiplatform==1.155.0
 httpx==0.28.1
 mcp==1.27.2
+numpy==2.3.5
 fastapi==0.136.3
 uvicorn[standard]==0.48.0

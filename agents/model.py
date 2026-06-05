@@ -15,7 +15,7 @@ PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "gen-lang-client-0384080704")
 # Gemini 3.x is served from the Vertex **global** endpoint only (it 404s in us-central1).
 # text-embedding-005 also resolves on global and is location-independent (identical vectors),
 # so the committed C5 index — built in us-central1 — stays valid when queried from global.
-LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "global")
+LOCATION = "global"
 
 
 def ensure_vertex_env() -> None:

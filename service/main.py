@@ -17,8 +17,9 @@ sys.path.insert(0, str(ROOT))
 
 from agents.model import LOCATION, MODEL_ID, PROJECT  # noqa: E402
 from agents.pipeline import CaseRun, run_case  # noqa: E402
+from grounding.retriever import index_available  # noqa: E402
 from tools import data_tools  # noqa: E402
-from tools.safety import contains_sensitive_term, sensitive_terms_from_source, scrub_mapping, scrub_text  # noqa: E402
+from tools.safety import contains_sensitive_term, sensitive_terms_from_source, scrub_mapping  # noqa: E402
 
 DEFAULT_CASE = "CASE-003"
 STATIC = Path(__file__).resolve().parent / "static"
@@ -49,6 +50,7 @@ def create_app() -> FastAPI:
             "project": PROJECT,
             "location": LOCATION,
             "cases": len(data_tools.list_cases()),
+            "pdq_index_available": index_available(),
         }
 
     @app.get("/cases")
@@ -86,13 +88,12 @@ def _response_from_run(run: CaseRun, *, include_evidence: bool = True) -> dict[s
     title = _title_for(run.case_id)
     terms = sensitive_terms_from_source(source)
     state = scrub_mapping(run.state, source)
-    combined_output = (state.get("draft") or "") + "\n" + (state.get("evidence") or "")
-    trace = []
-    for event in run.events:
-        item = dict(event)
-        if item.get("type") == "text":
-            item["text"] = scrub_text(str(item.get("text", "")), source)
-        trace.append(item)
+    trace = [scrub_mapping(event, source) for event in run.events]
+    combined_output = "\n".join([
+        str(state.get("draft") or ""),
+        str(state.get("evidence") or ""),
+        str(trace),
+    ])
 
     return {
         "case_id": run.case_id,

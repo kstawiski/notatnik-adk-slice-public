@@ -39,7 +39,7 @@ sys.path.insert(0, str(_ROOT))
 from agents.model import build_gemini  # noqa: E402
 from prompts import sanitized  # noqa: E402
 from tools import data_tools  # noqa: E402
-from tools.safety import scrub_mapping, scrub_text  # noqa: E402
+from tools.safety import scrub_mapping  # noqa: E402
 
 APP_NAME = "notatnik-adk-slice"
 MCP_SERVER = _ROOT / "mcp_server" / "server.py"
@@ -249,12 +249,10 @@ async def run_case(
 
 
 def _scrub_run(run: CaseRun) -> None:
-    """Redact source identifiers from final state and display trace text."""
+    """Redact source identifiers from final state and the display/API trace."""
     source = data_tools.get_document_text(run.case_id)
     run.state = scrub_mapping(run.state, source)
-    for event in run.events:
-        if event.get("type") == "text":
-            event["text"] = scrub_text(event.get("text", ""), source)
+    run.events = [scrub_mapping(event, source) for event in run.events]
 
 
 def _record(run: CaseRun, event) -> None:

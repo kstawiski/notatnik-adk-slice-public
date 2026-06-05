@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT))
 from agents.pipeline import CaseRun  # noqa: E402
 from service.main import app  # noqa: E402
 from tools import data_tools  # noqa: E402
-from tools.safety import contains_sensitive_term, scrub_text, sensitive_terms_from_source  # noqa: E402
+from tools.safety import contains_sensitive_term, scrub_obj, scrub_text, sensitive_terms_from_source  # noqa: E402
 
 
 def test_scrub_redacts_source_identifiers_without_damaging_trial_ids() -> None:
@@ -79,11 +79,32 @@ def test_source_identifier_extraction_ignores_evidence_labels() -> None:
     assert "NCT-0002" in scrubbed
 
 
+def test_scrub_obj_recursively_redacts_trace_values() -> None:
+    source = data_tools.get_document_text("E-PII-02")
+    event = {
+        "author": "documentation",
+        "type": "tool_call",
+        "name": "search_pubmed",
+        "args": {
+            "query": "DLBCL Czeslaw Synth-Kaczmarek MRN 778899",
+            "nested": ["DOB 1958-03-04", {"patient": "Czeslaw Synth-Kaczmarek"}],
+        },
+    }
+    scrubbed = scrub_obj(event, source)
+    text = str(scrubbed)
+    assert "Czeslaw" not in text
+    assert "778899" not in text
+    assert "1958-03-04" not in text
+    assert scrubbed["name"] == "search_pubmed"  # type: ignore[index]
+
+
 def test_health_and_cases_are_offline() -> None:
     client = TestClient(app)
     health = client.get("/healthz")
     assert health.status_code == 200
     assert health.json()["status"] == "ok"
+    assert health.json()["location"] == "global"
+    assert health.json()["pdq_index_available"] is True
 
     cases = client.get("/cases")
     assert cases.status_code == 200
@@ -102,6 +123,12 @@ def test_run_endpoint_shapes_scrubbed_response(monkeypatch) -> None:
         run = CaseRun(case_id=case_id)
         run.events = [
             {"author": "documentation", "type": "text", "text": "Patient Name: Czeslaw Synth-Kaczmarek"},
+            {
+                "author": "qc",
+                "type": "tool_call",
+                "name": "search_pubmed",
+                "args": {"query": "Czeslaw Synth-Kaczmarek MRN 778899"},
+            },
             {"author": "qc", "type": "tool_call", "name": "exit_loop", "args": {}},
         ]
         run.state = {

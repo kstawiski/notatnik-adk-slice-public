@@ -79,9 +79,22 @@ def scrub_text(text: str, source: str | None = None, *, extra_terms: set[str] | 
     return out
 
 
+def scrub_obj(value: object, source: str | None = None, *, extra_terms: set[str] | None = None) -> object:
+    """Recursively redact source identifiers from JSON-like values."""
+    if isinstance(value, str):
+        return scrub_text(value, source, extra_terms=extra_terms)
+    if isinstance(value, Mapping):
+        return {k: scrub_obj(v, source, extra_terms=extra_terms) for k, v in value.items()}
+    if isinstance(value, list):
+        return [scrub_obj(v, source, extra_terms=extra_terms) for v in value]
+    if isinstance(value, tuple):
+        return tuple(scrub_obj(v, source, extra_terms=extra_terms) for v in value)
+    return value
+
+
 def scrub_mapping(values: Mapping[str, object], source: str | None = None) -> dict[str, object]:
-    """Return a copy with string values redacted."""
-    return {k: scrub_text(v, source) if isinstance(v, str) else v for k, v in values.items()}
+    """Return a recursively redacted dict copy."""
+    return {k: scrub_obj(v, source) for k, v in values.items()}
 
 
 def contains_sensitive_term(text: str, terms: set[str]) -> bool:

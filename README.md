@@ -35,10 +35,10 @@ layer only — no clinical IP. Synthetic data only.
 ## Run
 
 ```bash
-python run_demo.py --case CASE-003 --evidence   # end-to-end on Vertex; writes a JSON trace
-python tests/test_c2.py                          # C2: determinism + real MCP round-trip
-python tests/test_c3.py                          # C3 wiring: MCP lists 5 tools + graph shape (no LLM)
-python -m pytest tests/test_c6.py -q             # C6 API + safety post-scrub, no Vertex
+python3 run_demo.py --case CASE-003 --write-trace # end-to-end on Vertex; writes a JSON trace
+python3 tests/test_c2.py                          # C2: determinism + real MCP round-trip
+python3 tests/test_c3.py                          # C3 wiring: MCP lists 5 tools + graph shape (no LLM)
+python3 -m pytest tests/test_c6.py -q             # C6 API + safety post-scrub, no Vertex
 uvicorn service.main:app --host 0.0.0.0 --port 8080
 ```
 
@@ -51,9 +51,9 @@ post-scrubs generated text and exposes a generated-output scrub PASS/HOLD flag.
 
 ## Judge Quick Checks
 
-- One-command local demo: `python run_demo.py --case CASE-003 --evidence`.
-- One-command API safety test: `python -m pytest tests/test_c6.py -q`.
-- Full offline test suite: `python -m pytest tests eval/tests -q`.
+- One-command local demo: `python3 run_demo.py --case CASE-003 --write-trace`.
+- One-command API safety test: `python3 -m pytest tests/test_c6.py -q`.
+- Full offline test suite: `python3 -m pytest tests eval/tests -q`.
 - Cloud Run deployment notes: `deploy/README.md`.
 - Synthetic data statement: all patient cases and literature/trial fixtures are invented; no real PHI is present.
 - License: MIT, see `LICENSE`.

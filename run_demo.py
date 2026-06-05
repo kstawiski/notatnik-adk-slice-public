@@ -6,7 +6,7 @@ evidence) and optionally writes a JSON trace under agents/evidence/. Makes REAL 
 calls via Vertex (the C1 client). Synthetic data only.
 
   GOOGLE_CLOUD_PROJECT=gen-lang-client-0384080704 GOOGLE_CLOUD_LOCATION=global \\
-  python run_demo.py --case CASE-002 --evidence
+  python3 run_demo.py --case CASE-002 --write-trace
 """
 from __future__ import annotations
 
@@ -67,13 +67,14 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--case", default="CASE-002", help="synthetic case id (CASE-001/002/003)")
     ap.add_argument("--max-iterations", type=int, default=4)
-    ap.add_argument("--evidence", action="store_true", help="write JSON trace under agents/evidence/")
+    ap.add_argument("--write-trace", action="store_true", help="write JSON trace under agents/evidence/")
+    ap.add_argument("--evidence", action="store_true", help=argparse.SUPPRESS)
     args = ap.parse_args()
 
     run = asyncio.run(run_case(args.case, max_iterations=args.max_iterations))
     _print_trace(run)
 
-    if args.evidence:
+    if args.write_trace or args.evidence:
         EVIDENCE.mkdir(parents=True, exist_ok=True)
         stamp = _dt.datetime.now(_dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         out = EVIDENCE / f"c3_run_{args.case}_{stamp}.json"

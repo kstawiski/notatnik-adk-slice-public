@@ -27,7 +27,7 @@ Devpost-required asset fields observed on the project edit page: `Video*`, `Code
 2. Video recorded/uploaded.
 3. Devpost final fields completed and Submit clicked.
 
-Code access is available as a public archive. If Devpost rejects an archive link and requires a repository-style URL, create a public remote from `adk-slice-public/` and replace the code URL before final submission.
+Code access is available as a public folder share. If Devpost rejects a folder/share link and requires a repository-style URL, create a public remote from `adk-slice-public/` and replace the code URL before final submission.
 
 ## Completed Work
 
@@ -37,7 +37,7 @@ Code access is available as a public archive. If Devpost rejects an archive link
 - C4 reliability eval: finalized; plausibility floor passed.
 - C5 grounding: DONE.
 - C6 Cloud Run service package: FastAPI UI/API, Docker/Cloud Run scaffolding, and generated-output scrub implemented.
-- C6 tests: `tests/test_c6.py` 5/5; `tests eval/tests` 24/24.
+- C6 tests: `tests/test_c6.py`; full offline suite: `tests eval/tests`.
 - C6 Docker: build, image inventory, and container smoke green.
 - C6 plausibility/safety floor: deterministic floor PASS; no residual identifiers after generated-output scrub probes.
 - Public package QA: one root commit, raw C4 `runs.jsonl` excluded, tracked demo traces removed, targeted forbidden/secret scan clean, public-export tests and Docker/container smoke green.
