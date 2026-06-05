@@ -33,6 +33,44 @@ Use these testing links:
 
 The public Cloud Run service was smoke-tested on 2026-06-05 with `/health`, `/cases`, first-screen CASE-003 source preview, and `CASE-003` (`include_evidence=false`). The read-only pages are public; the Vertex-backed `/run` action should use the testing access token supplied in Devpost notes to control spend. Do not paste local service URLs into Devpost.
 
+## Description Field
+
+Use this text for the Devpost `DESCRIPTION` field. It is under 5,000 characters.
+
+### Problem to solve
+
+Oncology documentation is high-stakes, repetitive, and easy for a language model to get wrong in ways that sound plausible. A note may need to preserve staging, nodal status, margins, biomarkers, evidence citations, trial context, contradictions between source documents, and explicit uncertainty. In this setting, a fluent generic agent can fabricate a cancer stage, silently choose between conflicting records, or leak identifiers. The problem we target is not replacing clinicians; it is making source-faithfulness failures visible before an oncology documentation agent is used around real clinical workflows.
+
+### Our solution
+
+Notatnik Medyczny is an existing oncology documentation product. This submission is a public, synthetic Track 2 Optimize reliability slice for that product. Judges can run synthetic oncology cases through a Cloud Run demo, inspect the original source files first, and then see how the agent drafts, checks, and scrubs a structured clinical summary.
+
+The agent uses an ADK documentation sub-agent to draft from source documents, an independent QC sub-agent to reject or approve the draft, and a gated evidence sub-agent that only runs after QC approval. A real MCP stdio tool boundary keeps data tools separate from the LLM agents. The public trace reports draft count, QC rejections, QC pass status, tool names, and generated-output scrub status without exposing raw private traces.
+
+The central demo case is CASE-003. One source says rectal cancer is cT2 N0, while another says cT3 N1. The desired behavior is not to pick one stage. The agent surfaces `[DISCREPANCY] cT2 N0 vs cT3 N1` and leaves the reconciliation to the physician.
+
+### Technologies used
+
+The project uses Gemini on Vertex AI, Google ADK, Cloud Run, Docker, and a FastAPI judge interface. ADK coordinates the documentation, QC, and evidence agents. MCP/FastMCP exposes deterministic synthetic data tools through a stdio server. The demo uses a committed NCI PDQ grounding index, NumPy-backed retrieval, deterministic generated-output scrubbing, and a self-contained synthetic simulation, evaluation, and trace workflow. The public Cloud Run service is spend-controlled with a token-protected `/run` action, rate limits, evidence disabled for the public demo, and minimized trace output.
+
+### Data sources
+
+All patient cases are invented synthetic oncology fixtures. No real patient data or PHI is included. Literature and trial lookups are deterministic synthetic records shaped like PubMed and ClinicalTrials.gov responses. Guideline grounding uses NCI PDQ cancer treatment summaries, which are public-domain U.S. government content, cleaned into a committed local corpus and embedding index. Proprietary Notatnik production prompts, templates, rubrics, recognizers, clinical data, and private traces are not included.
+
+### Findings and learnings
+
+We evaluated 15 synthetic cases with 3 runs per case at temperature 0 and a held-out test split of 8 cases. The primary metric was a gold-grounded LLM grader, with deterministic rules as a cross-check. This is a descriptive reliability profile, not a significance claim.
+
+The main finding was that prompt optimization improved held-out source-grounded reliability by +0.115 on the primary score and +0.098 on the rule score. It fixed concrete failures, including a case where the baseline fabricated a melanoma stage instead of flagging missing TNM data.
+
+The second finding was more cautionary. Multi-agent QC helped with targeted contradictions, but it was not uniformly better on held-out cases and it reintroduced synthetic identifiers in one PII case. That negative result was useful: it led us to add deterministic generated-output scrubbing rather than relying on LLM review alone.
+
+We also learned that a holistic judge can reward a confident fabrication, which is why gold-grounded evaluation matters for clinical documentation.
+
+### Third-party integrations
+
+The project uses Google Cloud services and SDKs, including Vertex AI, Gemini, ADK, and Cloud Run. It also uses MCP/FastMCP, FastAPI, Docker, NumPy, and public-domain NCI PDQ content. We have authorization to use the submitted code and public-domain data. The public artifact contains only synthetic cases and sanitized prompts. It does not submit real PHI or proprietary production Notatnik clinical IP.
+
 ## Problem
 
 Oncology documentation is high-stakes and detail-heavy: staging, margins, nodal status, biomarkers, evidence citations, and trial prescreening all need to stay source-grounded. A generic note-generation agent can sound fluent while silently fabricating a cancer stage, missing a contradiction between documents, or leaking source identifiers.
