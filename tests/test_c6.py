@@ -109,8 +109,15 @@ def test_health_and_cases_are_offline() -> None:
 
     cases = client.get("/cases")
     assert cases.status_code == 200
-    ids = {case["case_id"] for case in cases.json()}
+    payload = cases.json()
+    ids = {case["case_id"] for case in payload}
     assert {"CASE-001", "CASE-002", "CASE-003", "E-PII-02"} <= ids
+    case_003 = next(case for case in payload if case["case_id"] == "CASE-003")
+    assert "mri_rectum.txt" in case_003["source_text"]
+    assert "mdt_note.txt" in case_003["source_text"]
+    assert "cT2 N0" in case_003["source_text"]
+    assert "cT3 N1" in case_003["source_text"]
+    assert case_003["before"]["label"] == "Unhardened behavior"
 
 
 def test_run_endpoint_shapes_scrubbed_response(monkeypatch) -> None:

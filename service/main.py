@@ -56,7 +56,12 @@ def create_app() -> FastAPI:
 
     @app.get("/cases")
     async def cases() -> list[dict[str, Any]]:
-        return sorted(data_tools.list_cases(), key=lambda item: item["case_id"])
+        items = sorted(data_tools.list_cases(), key=lambda item: item["case_id"])
+        for item in items:
+            case_id = str(item["case_id"])
+            item["source_text"] = data_tools.get_document_text(case_id)
+            item["before"] = _before_story(case_id)
+        return items
 
     @app.post("/run")
     async def run(req: RunRequest) -> dict[str, Any]:

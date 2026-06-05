@@ -106,6 +106,23 @@
       main {
         padding: 20px 0 34px;
       }
+      .brief {
+        background: #eef7f5;
+        border: 1px solid #bfd9d4;
+        border-radius: 8px;
+        margin-bottom: 14px;
+        padding: 12px 14px;
+        color: #25423d;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .brief strong {
+        color: var(--teal-dark);
+        display: block;
+        font-size: 12px;
+        margin-bottom: 2px;
+        text-transform: uppercase;
+      }
       .metrics {
         display: grid;
         grid-template-columns: repeat(5, minmax(120px, 1fr));
@@ -125,6 +142,13 @@
         display: block;
         color: var(--muted);
         font-size: 12px;
+      }
+      .metric small {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.2;
+        margin-top: 1px;
       }
       .metric strong {
         display: block;
@@ -187,40 +211,45 @@
       <div class="wrap top">
         <div>
           <h1>Notatnik Medyczny ADK Reliability Slice</h1>
-          <div class="sub">Track 2 Optimize | Gemini on Vertex AI | ADK + MCP | synthetic oncology cases</div>
+          <div class="sub">Original synthetic documents, ADK documentation/QC loop, scrubbed source-grounded output</div>
         </div>
         <div class="controls">
           <select id="caseSelect" aria-label="Synthetic case"></select>
           <label class="toggle">
             <input id="evidenceToggle" type="checkbox" />
-            Evidence
+            Evidence retrieval
           </label>
-          <button id="runBtn" type="button">Run</button>
+          <button id="runBtn" type="button">Run ADK loop</button>
           <span id="status">Loading cases...</span>
         </div>
       </div>
     </header>
 
     <main class="wrap">
+      <section class="brief" aria-label="Demo focus">
+        <strong>Demo focus</strong>
+        Review the original synthetic documents on the left, then run the ADK loop. The default case contains a rectal-cancer staging conflict; a reliable output should surface the discrepancy instead of choosing one stage.
+      </section>
+
       <section class="metrics" aria-label="Run metrics">
-        <div class="metric"><span>QC status</span><strong id="mQc">-</strong></div>
-        <div class="metric"><span>Drafts</span><strong id="mDrafts">-</strong></div>
-        <div class="metric"><span>Rejections</span><strong id="mReject">-</strong></div>
-        <div class="metric"><span>Self-corrected</span><strong id="mSelf">-</strong></div>
-        <div class="metric"><span>Generated scrub</span><strong id="mPii">-</strong></div>
+        <div class="metric"><span>QC status</span><small>auditor decision</small><strong id="mQc">-</strong></div>
+        <div class="metric"><span>Drafts</span><small>documentation attempts</small><strong id="mDrafts">-</strong></div>
+        <div class="metric"><span>Rejections</span><small>QC rewrites requested</small><strong id="mReject">-</strong></div>
+        <div class="metric"><span>Self-corrected</span><small>loop changed output</small><strong id="mSelf">-</strong></div>
+        <div class="metric"><span>Generated scrub</span><small>identifier safety check</small><strong id="mPii">-</strong></div>
       </section>
 
       <section class="grid">
         <article class="pane">
-          <h2>Source</h2>
-          <pre id="sourceOut">Select a case and run the slice.</pre>
+          <h2>Original Synthetic Source Documents</h2>
+          <pre id="sourceOut">Loading case documents...</pre>
         </article>
         <article class="pane">
-          <h2>Before</h2>
+          <h2>Reliability Risk Before Hardening</h2>
           <pre id="beforeOut">-</pre>
         </article>
         <article class="pane">
-          <h2>After</h2>
+          <h2>Hardened Agent Output</h2>
           <pre id="afterOut">-</pre>
         </article>
       </section>
@@ -258,6 +287,28 @@
         return lines.join("\n");
       }
 
+      function selectedCase() {
+        return state.cases.find((c) => c.case_id === $("caseSelect").value);
+      }
+
+      function resetMetrics() {
+        for (const id of ["mQc", "mDrafts", "mReject", "mSelf", "mPii"]) {
+          $(id).textContent = "-";
+          $(id).className = "";
+        }
+      }
+
+      function renderSelectedCase() {
+        const item = selectedCase();
+        if (!item) return;
+        $("sourceOut").textContent = item.source_text || "(source unavailable)";
+        $("beforeOut").textContent = `${item.before.label}\n\n${item.before.text}`;
+        $("afterOut").textContent = "Run the ADK loop to generate the hardened note.";
+        $("traceOut").textContent = "Trace appears after the run.";
+        resetMetrics();
+        setStatus(`${state.cases.length} cases ready`, "ok");
+      }
+
       async function loadCases() {
         const res = await fetch("/cases");
         state.cases = await res.json();
@@ -270,7 +321,7 @@
           if (c.case_id === "CASE-003") opt.selected = true;
           select.appendChild(opt);
         }
-        setStatus(`${state.cases.length} cases ready`, "ok");
+        renderSelectedCase();
       }
 
       async function runCase() {
@@ -311,6 +362,7 @@
       }
 
       $("runBtn").addEventListener("click", runCase);
+      $("caseSelect").addEventListener("change", renderSelectedCase);
       loadCases().catch((err) => setStatus(String(err), "bad"));
     </script>
   </body>
