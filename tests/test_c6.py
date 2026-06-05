@@ -100,11 +100,12 @@ def test_scrub_obj_recursively_redacts_trace_values() -> None:
 
 def test_health_and_cases_are_offline() -> None:
     client = TestClient(app)
-    health = client.get("/healthz")
+    health = client.get("/health")
     assert health.status_code == 200
     assert health.json()["status"] == "ok"
     assert health.json()["location"] == "global"
     assert health.json()["pdq_index_available"] is True
+    assert client.get("/healthz").status_code == 200
 
     cases = client.get("/cases")
     assert cases.status_code == 200

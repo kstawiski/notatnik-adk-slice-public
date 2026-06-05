@@ -2,7 +2,7 @@ flowchart LR
   judge[Devpost judge]
 
   subgraph public["Public synthetic submission boundary"]
-    ui[Cloud Run FastAPI judge surface<br/>UI + /run + /healthz + /cases]
+    ui[Cloud Run FastAPI judge surface<br/>UI + /run + /health + /cases]
     adk[ADK orchestrator<br/>SequentialAgent + LoopAgent]
     doc[Documentation agent<br/>drafts structured note]
     qc[QC agent<br/>source-faithfulness audit]

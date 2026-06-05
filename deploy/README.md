@@ -48,6 +48,6 @@ Post-deploy proof:
 
 ```bash
 URL="$(gcloud run services describe notatnik-adk-slice --project "$PROJECT" --region "$REGION" --format='value(status.url)')"
-curl -fsS "$URL/healthz"
+curl -fsS "$URL/health"
 curl -fsS "$URL/cases" | head
 ```

@@ -40,8 +40,9 @@ def create_app() -> FastAPI:
     async def index() -> HTMLResponse:
         return HTMLResponse(INDEX_HTML)
 
+    @app.get("/health")
     @app.get("/healthz")
-    async def healthz() -> dict[str, Any]:
+    async def health() -> dict[str, Any]:
         return {
             "status": "ok",
             "mock_mode": data_tools.mock_mode(),

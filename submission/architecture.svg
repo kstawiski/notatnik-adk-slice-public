@@ -53,7 +53,7 @@
 
   <rect class="public" x="310" y="206" width="262" height="112" rx="14"/>
   <text class="box-title" x="348" y="248">FastAPI UI/API</text>
-  <text class="box-text" x="337" y="276">/run, /healthz, /cases</text>
+  <text class="box-text" x="337" y="276">/run, /health, /cases</text>
   <text class="box-text" x="337" y="298">judge-visible controls</text>
 
   <rect class="public" x="634" y="206" width="286" height="112" rx="14"/>

@@ -53,7 +53,7 @@ Screen:
 
 - `submission/architecture.svg`.
 - Optional browser/API receipts:
-  - A browser tab at `/healthz` shows model, project, location, cases.
+  - A browser tab at `/health` shows model, project, location, cases.
   - A redacted `/run` response can show QC status and generated-output scrub PASS.
 
 ## 1:30-1:50 - Business and Close
