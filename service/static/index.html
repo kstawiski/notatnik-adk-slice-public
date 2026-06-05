@@ -610,7 +610,7 @@
           <nav class="footer-links" aria-label="Footer links">
             <a href="https://radioonkolog.pl/" rel="noopener noreferrer" target="_blank">Radioonkolog.pl</a>
             <a href="https://radioonkolog.pl/polityka/" rel="noopener noreferrer" target="_blank">Polityka prywatnosci</a>
-            <a href="https://chmura.radioonkolog.pl/s/syZbGTdHpMEHa3d" rel="noopener noreferrer" target="_blank">Code package</a>
+            <a href="https://github.com/kstawiski/notatnik-adk-slice-public" rel="noopener noreferrer" target="_blank">Code repository</a>
           </nav>
         </div>
       </div>
@@ -618,7 +618,21 @@
 
     <script>
       const $ = (id) => document.getElementById(id);
-      const state = { cases: [] };
+      const state = { cases: [], runToken: "" };
+
+      function initRunToken() {
+        const params = new URLSearchParams(window.location.search);
+        const supplied = params.get("token") || params.get("run_token") || "";
+        if (supplied) {
+          sessionStorage.setItem("notatnikRunToken", supplied);
+          params.delete("token");
+          params.delete("run_token");
+          const query = params.toString();
+          const cleanUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+        state.runToken = sessionStorage.getItem("notatnikRunToken") || "";
+      }
 
       function escapeHtml(value) {
         return String(value)
@@ -686,7 +700,7 @@
         </div><div class="trace-summary">${calls || '<span class="tool-chip">no tool calls</span>'}</div>`;
         const events = (trace.events || []).map((event) => {
           const label = event.type === "tool_call" ? `-> ${event.name}` : event.type === "tool_response" ? `<- ${event.name}` : event.type;
-          const text = event.type === "text" ? event.text : "";
+          const text = event.summary || (event.args_keys ? `args: ${event.args_keys.join(", ")}` : "");
           return `<div class="trace-event"><span class="event-author">${escapeHtml(event.author || "agent")}</span> ${escapeHtml(label)}${text ? `<br>${highlightClinical(text)}` : ""}</div>`;
         }).join("");
         return summary + events;
@@ -733,6 +747,18 @@
         renderSelectedCase();
       }
 
+      async function loadHealth() {
+        const res = await fetch("/health");
+        if (!res.ok) return;
+        const health = await res.json();
+        if (health.evidence_enabled === false) {
+          const toggle = $("evidenceToggle");
+          toggle.checked = false;
+          toggle.disabled = true;
+          toggle.closest(".toggle").title = "Evidence retrieval is disabled for the public spend-controlled demo.";
+        }
+      }
+
       async function runCase() {
         const btn = $("runBtn");
         btn.disabled = true;
@@ -742,9 +768,11 @@
         $("traceOut").innerHTML = '<span class="working">Waiting for ADK trace...</span>';
         setStatus("Running Vertex agent...", "amber");
         try {
+          const headers = { "Content-Type": "application/json" };
+          if (state.runToken) headers.Authorization = `Bearer ${state.runToken}`;
           const res = await fetch("/run", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers,
             body: JSON.stringify({
               case_id: $("caseSelect").value,
               max_iterations: 4,
@@ -772,15 +800,21 @@
         } catch (err) {
           setFlowState("risk");
           setStatus("Run failed", "bad");
-          setExplanation("Run failed", "The service returned an error. Do not record around this; rerun only after the service is fixed.");
+          if (String(err).includes("401")) {
+            setExplanation("Testing token required", "The source documents remain public, but running the Vertex-backed agent requires the testing access token supplied in Devpost.");
+          } else {
+            setExplanation("Run failed", "The service returned an error. Do not record around this; rerun only after the service is fixed.");
+          }
           $("traceOut").textContent = String(err);
         } finally {
           btn.disabled = false;
         }
       }
 
+      initRunToken();
       $("runBtn").addEventListener("click", runCase);
       $("caseSelect").addEventListener("change", renderSelectedCase);
+      loadHealth().catch(() => {});
       loadCases().catch((err) => setStatus(String(err), "bad"));
     </script>
   </body>

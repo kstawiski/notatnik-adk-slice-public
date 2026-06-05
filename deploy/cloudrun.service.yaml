@@ -34,6 +34,16 @@ spec:
               value: global
             - name: RUN_TIMEOUT_SECONDS
               value: "180"
+            - name: MAX_AGENT_ITERATIONS
+              value: "4"
+            - name: MAX_REQUEST_BYTES
+              value: "4096"
+            - name: RUN_RATE_LIMIT_PER_MINUTE
+              value: "4"
+            - name: RUN_GLOBAL_RATE_LIMIT_PER_MINUTE
+              value: "8"
+            - name: ALLOW_EVIDENCE
+              value: "false"
           resources:
             limits:
               cpu: "1"

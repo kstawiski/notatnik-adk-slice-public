@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from agents.pipeline import CaseRun  # noqa: E402
+from service import main as service_main  # noqa: E402
 from service.main import app  # noqa: E402
 from tools import data_tools  # noqa: E402
 from tools.safety import contains_sensitive_term, scrub_obj, scrub_text, sensitive_terms_from_source  # noqa: E402
@@ -105,6 +106,10 @@ def test_health_and_cases_are_offline() -> None:
     assert health.json()["status"] == "ok"
     assert health.json()["location"] == "global"
     assert health.json()["pdq_index_available"] is True
+    assert health.json()["run_auth_required"] is False
+    assert health.json()["run_rate_limited"] is True
+    assert health.json()["max_agent_iterations"] == 4
+    assert health.json()["evidence_enabled"] is False
     assert client.get("/healthz").status_code == 200
 
     cases = client.get("/cases")
@@ -121,6 +126,8 @@ def test_health_and_cases_are_offline() -> None:
 
 
 def test_run_endpoint_shapes_scrubbed_response(monkeypatch) -> None:
+    service_main._RUN_CACHE.clear()
+
     async def fake_run_case(
         case_id: str,
         max_iterations: int = 4,
@@ -153,17 +160,104 @@ def test_run_endpoint_shapes_scrubbed_response(monkeypatch) -> None:
     body = res.json()
     combined = body["after"]["draft"] + "\n" + body["after"]["evidence"] + "\n" + str(body["trace"]["events"])
     assert "Czeslaw" not in combined and "778899" not in combined
+    assert "search_pubmed" in str(body["trace"]["events"])
+    assert "query" in str(body["trace"]["events"])
     assert body["safety"]["post_scrub"] is True
     assert body["safety"]["contains_source_identifier_after_scrub"] is False
     assert body["trace"]["qc_passed"] is True
+    assert body["billing"]["cache_hit"] is False
+
+
+def test_run_endpoint_caches_identical_public_runs(monkeypatch) -> None:
+    service_main._RUN_CACHE.clear()
+    calls = 0
+
+    async def fake_run_case(
+        case_id: str,
+        max_iterations: int = 4,
+        *,
+        scrub_output: bool = True,
+        include_evidence: bool = True,
+    ) -> CaseRun:
+        nonlocal calls
+        calls += 1
+        run = CaseRun(case_id=case_id)
+        run.events = [{"author": "documentation", "type": "text", "text": "Diagnosis: synthetic"}]
+        run.state = {"draft": "Diagnosis: synthetic", "evidence": "", "qc_passed": True}
+        return run
+
+    monkeypatch.setattr("service.main.run_case", fake_run_case)
+    client = TestClient(app)
+    first = client.post("/run", json={"case_id": "CASE-001", "max_iterations": 4, "include_evidence": False})
+    second = client.post("/run", json={"case_id": "CASE-001", "max_iterations": 4, "include_evidence": False})
+
+    assert first.status_code == 200
+    assert second.status_code == 200
+    assert calls == 1
+    assert first.json()["billing"]["cache_hit"] is False
+    assert second.json()["billing"]["cache_hit"] is True
+
+
+def test_run_endpoint_requires_access_token_when_configured(monkeypatch) -> None:
+    monkeypatch.setenv("RUN_ACCESS_TOKEN", "judge-secret")
+    client = TestClient(app)
+
+    res = client.post("/run", json={"case_id": "NOPE"})
+    assert res.status_code == 401
+
+    query_res = client.post("/run?token=judge-secret", json={"case_id": "NOPE"})
+    assert query_res.status_code == 404
+
+    header_res = client.post(
+        "/run",
+        headers={"Authorization": "Bearer judge-secret"},
+        json={"case_id": "NOPE"},
+    )
+    assert header_res.status_code == 404
+
+
+def test_run_endpoint_rejects_expensive_public_options(monkeypatch) -> None:
+    monkeypatch.delenv("RUN_ACCESS_TOKEN", raising=False)
+    monkeypatch.setenv("MAX_AGENT_ITERATIONS", "3")
+    monkeypatch.setenv("ALLOW_EVIDENCE", "false")
+    client = TestClient(app)
+
+    too_many_iterations = client.post(
+        "/run",
+        json={"case_id": "CASE-003", "max_iterations": 4, "include_evidence": False},
+    )
+    assert too_many_iterations.status_code == 400
+
+    evidence = client.post(
+        "/run",
+        json={"case_id": "CASE-003", "max_iterations": 3, "include_evidence": True},
+    )
+    assert evidence.status_code == 403
+
+
+def test_run_endpoint_rejects_oversized_request(monkeypatch) -> None:
+    monkeypatch.setenv("MAX_REQUEST_BYTES", "10")
+    client = TestClient(app)
+
+    res = client.post(
+        "/run",
+        content='{"case_id":"CASE-003"}',
+        headers={"Content-Type": "application/json"},
+    )
+    assert res.status_code == 413
 
 
 def test_judge_ui_exposes_evidence_toggle() -> None:
     html = (ROOT / "service" / "static" / "index.html").read_text()
     assert 'id="evidenceToggle"' in html
     assert 'include_evidence: $("evidenceToggle").checked' in html
+    assert "notatnikRunToken" in html
+    assert "Authorization" in html
+    assert "loadHealth()" in html
     assert "Radioonkolog.pl / Notatnik Medyczny" in html
     assert "https://radioonkolog.pl/polityka/" in html
+    assert "https://github.com/kstawiski/notatnik-adk-slice-public" in html
+    assert "https://chmura.radioonkolog.pl" not in html
     assert "Synthetic challenge demo only. No real PHI." in html
 
 

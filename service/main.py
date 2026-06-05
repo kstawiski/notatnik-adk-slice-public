@@ -2,14 +2,18 @@
 from __future__ import annotations
 
 import asyncio
+import hmac
 import logging
 import os
 import sys
+import time
+from collections import defaultdict, deque
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,6 +29,11 @@ DEFAULT_CASE = "CASE-003"
 STATIC = Path(__file__).resolve().parent / "static"
 INDEX_HTML = (STATIC / "index.html").read_text()
 LOG = logging.getLogger(__name__)
+_RATE_LOCK = asyncio.Lock()
+_CACHE_LOCK = asyncio.Lock()
+_RUN_BUCKETS: dict[str, deque[float]] = defaultdict(deque)
+_GLOBAL_BUCKET: deque[float] = deque()
+_RUN_CACHE: dict[tuple[str, int, bool], tuple[float, dict[str, Any]]] = {}
 
 
 class RunRequest(BaseModel):
@@ -35,6 +44,34 @@ class RunRequest(BaseModel):
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Notatnik ADK Reliability Slice", version="0.6.0")
+
+    @app.middleware("http")
+    async def request_size_guard(request: Request, call_next):
+        if request.url.path == "/run":
+            max_bytes = _env_int("MAX_REQUEST_BYTES", 4096, minimum=1)
+            raw_length = request.headers.get("content-length")
+            if raw_length:
+                try:
+                    length = int(raw_length)
+                except ValueError:
+                    return JSONResponse({"detail": "Invalid Content-Length header"}, status_code=400)
+                if length > max_bytes:
+                    return JSONResponse(
+                        {"detail": f"Request body is too large; limit is {max_bytes} bytes"},
+                        status_code=413,
+                    )
+            body = await request.body()
+            if len(body) > max_bytes:
+                return JSONResponse(
+                    {"detail": f"Request body is too large; limit is {max_bytes} bytes"},
+                    status_code=413,
+                )
+
+            async def receive() -> dict[str, Any]:
+                return {"type": "http.request", "body": body, "more_body": False}
+
+            request._receive = receive  # noqa: SLF001 - Starlette has no public body replay hook.
+        return await call_next(request)
 
     @app.get("/", response_class=HTMLResponse)
     async def index() -> HTMLResponse:
@@ -48,10 +85,15 @@ def create_app() -> FastAPI:
             "mock_mode": data_tools.mock_mode(),
             "grounding_pdq": os.environ.get("GROUNDING_PDQ", "unset"),
             "model": MODEL_ID,
-            "project": PROJECT,
+            "project_configured": bool(PROJECT),
             "location": LOCATION,
             "cases": len(data_tools.list_cases()),
             "pdq_index_available": index_available(),
+            "run_auth_required": bool(_run_access_token()),
+            "run_rate_limited": _env_int("RUN_RATE_LIMIT_PER_MINUTE", 4, minimum=0) > 0
+            or _env_int("RUN_GLOBAL_RATE_LIMIT_PER_MINUTE", 8, minimum=0) > 0,
+            "max_agent_iterations": _env_int("MAX_AGENT_ITERATIONS", 4, minimum=1, maximum=6),
+            "evidence_enabled": _env_bool("ALLOW_EVIDENCE", False),
         }
 
     @app.get("/cases")
@@ -64,10 +106,24 @@ def create_app() -> FastAPI:
         return items
 
     @app.post("/run")
-    async def run(req: RunRequest) -> dict[str, Any]:
+    async def run(req: RunRequest, request: Request) -> dict[str, Any]:
+        _authorize_run(request)
         known = {case["case_id"] for case in data_tools.list_cases()}
         if req.case_id not in known:
             raise HTTPException(status_code=404, detail=f"Unknown case_id: {req.case_id}")
+        max_iterations = _env_int("MAX_AGENT_ITERATIONS", 4, minimum=1, maximum=6)
+        if req.max_iterations > max_iterations:
+            raise HTTPException(
+                status_code=400,
+                detail=f"max_iterations is capped at {max_iterations} for the public demo",
+            )
+        if req.include_evidence and not _env_bool("ALLOW_EVIDENCE", False):
+            raise HTTPException(status_code=403, detail="Evidence retrieval is disabled for this public demo")
+        await _enforce_run_rate_limit(request)
+        cache_key = (req.case_id, req.max_iterations, req.include_evidence)
+        cached = await _get_cached_run(cache_key)
+        if cached is not None:
+            return cached
         try:
             result = await asyncio.wait_for(
                 run_case(
@@ -84,9 +140,118 @@ def create_app() -> FastAPI:
         except Exception as exc:  # noqa: BLE001 - surfaced to judges as a service failure, not hidden
             LOG.exception("Agent run failed for case_id=%s", req.case_id)
             raise HTTPException(status_code=502, detail=f"Agent run failed: {type(exc).__name__}") from exc
-        return _response_from_run(result, include_evidence=req.include_evidence)
+        response = _response_from_run(result, include_evidence=req.include_evidence)
+        await _set_cached_run(cache_key, response)
+        return response
 
     return app
+
+
+def _env_int(name: str, default: int, *, minimum: int = 0, maximum: int | None = None) -> int:
+    raw = os.environ.get(name)
+    try:
+        value = int(raw) if raw is not None else default
+    except ValueError:
+        value = default
+    value = max(minimum, value)
+    if maximum is not None:
+        value = min(maximum, value)
+    return value
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    return raw.lower() in {"1", "true", "yes", "on"}
+
+
+def _run_access_token() -> str:
+    return os.environ.get("RUN_ACCESS_TOKEN", "").strip()
+
+
+def _authorize_run(request: Request) -> None:
+    required = _run_access_token()
+    if not required:
+        return
+    supplied = _request_token(request)
+    if not supplied or not hmac.compare_digest(supplied, required):
+        raise HTTPException(
+            status_code=401,
+            detail="A testing access token is required to run the Vertex-backed agent",
+        )
+
+
+def _request_token(request: Request) -> str:
+    auth = request.headers.get("authorization", "")
+    scheme, _, value = auth.partition(" ")
+    if scheme.lower() == "bearer" and value.strip():
+        return value.strip()
+    return (request.query_params.get("token") or request.query_params.get("run_token") or "").strip()
+
+
+def _client_key(request: Request) -> str:
+    forwarded_for = request.headers.get("x-forwarded-for", "").strip()
+    host = request.client.host if request.client else "unknown"
+    return f"{host}|{forwarded_for[:200]}"
+
+
+async def _enforce_run_rate_limit(request: Request) -> None:
+    window = _env_int("RUN_RATE_LIMIT_WINDOW_SECONDS", 60, minimum=1, maximum=3600)
+    per_client = _env_int("RUN_RATE_LIMIT_PER_MINUTE", 4, minimum=0, maximum=1000)
+    global_limit = _env_int("RUN_GLOBAL_RATE_LIMIT_PER_MINUTE", 8, minimum=0, maximum=1000)
+    if per_client == 0 and global_limit == 0:
+        return
+
+    now = time.monotonic()
+    client = _client_key(request)
+    async with _RATE_LOCK:
+        if len(_RUN_BUCKETS) > 2048:
+            _RUN_BUCKETS.clear()
+        bucket = _RUN_BUCKETS[client]
+        _trim_bucket(bucket, now, window)
+        _trim_bucket(_GLOBAL_BUCKET, now, window)
+        if per_client and len(bucket) >= per_client:
+            raise HTTPException(status_code=429, detail="Run rate limit exceeded for this client")
+        if global_limit and len(_GLOBAL_BUCKET) >= global_limit:
+            raise HTTPException(status_code=429, detail="Global run rate limit exceeded")
+        bucket.append(now)
+        _GLOBAL_BUCKET.append(now)
+
+
+def _trim_bucket(bucket: deque[float], now: float, window: int) -> None:
+    while bucket and now - bucket[0] > window:
+        bucket.popleft()
+
+
+async def _get_cached_run(key: tuple[str, int, bool]) -> dict[str, Any] | None:
+    ttl = _env_int("RUN_CACHE_TTL_SECONDS", 3600, minimum=0)
+    if ttl == 0:
+        return None
+    now = time.monotonic()
+    async with _CACHE_LOCK:
+        item = _RUN_CACHE.get(key)
+        if item is None:
+            return None
+        created, response = item
+        if now - created > ttl:
+            _RUN_CACHE.pop(key, None)
+            return None
+        cached = deepcopy(response)
+        cached.setdefault("billing", {})["cache_hit"] = True
+        return cached
+
+
+async def _set_cached_run(key: tuple[str, int, bool], response: dict[str, Any]) -> None:
+    ttl = _env_int("RUN_CACHE_TTL_SECONDS", 3600, minimum=0)
+    if ttl == 0:
+        return
+    async with _CACHE_LOCK:
+        if len(_RUN_CACHE) > 128:
+            _RUN_CACHE.clear()
+        stored = deepcopy(response)
+        stored.setdefault("billing", {})["cache_hit"] = False
+        _RUN_CACHE[key] = (time.monotonic(), stored)
 
 
 def _response_from_run(run: CaseRun, *, include_evidence: bool = True) -> dict[str, Any]:
@@ -126,10 +291,32 @@ def _response_from_run(run: CaseRun, *, include_evidence: bool = True) -> dict[s
             "qc_passed": run.qc_passed,
             "self_corrected": run.self_corrected,
             "tool_calls": run.tool_calls(),
-            "events": trace,
+            "events": _public_trace_events(trace),
         },
-        "vertex": {"model": MODEL_ID, "project": PROJECT, "location": LOCATION},
+        "billing": {"cache_hit": False},
+        "vertex": {"model": MODEL_ID, "location": LOCATION},
     }
+
+
+def _public_trace_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Return observability metadata without raw intermediate model text or tool args."""
+    public: list[dict[str, Any]] = []
+    for event in events:
+        item: dict[str, Any] = {
+            "author": event.get("author", "agent"),
+            "type": event.get("type", "event"),
+        }
+        if event.get("name"):
+            item["name"] = event["name"]
+        if event.get("type") == "text":
+            item["summary"] = "generated text omitted from public trace"
+            item["chars"] = len(str(event.get("text") or ""))
+        elif event.get("type") == "tool_call":
+            args = event.get("args")
+            if isinstance(args, dict):
+                item["args_keys"] = sorted(str(key) for key in args)
+        public.append(item)
+    return public
 
 
 def _title_for(case_id: str) -> str:

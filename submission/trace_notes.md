@@ -40,7 +40,7 @@ Margins / nodes: [DATA GAP] Margins not documented in source
 - ADK loop behavior: documentation drafts > QC rejects > final QC pass.
 - Tool boundary: source is fetched through the MCP tool layer, not direct private backend calls.
 - Safety: generated-output scrub flag is PASS.
-- Vertex provenance: `/health` exposes `gemini-3.1-flash-lite`, project `gen-lang-client-0384080704`, location `global`.
+- Vertex provenance: `/health` exposes `gemini-3.1-flash-lite`, `location=global`, loaded synthetic case count, and PDQ index availability.
 
 ## What Not To Show
 

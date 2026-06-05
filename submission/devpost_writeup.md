@@ -32,7 +32,7 @@ Use these testing links:
 - Video URL: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k
 - Direct video download: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k/download
 
-The public Cloud Run service was smoke-tested on 2026-06-05 with `/health`, `/cases`, first-screen CASE-003 source preview, and `CASE-003` (`include_evidence=false`). Do not paste local service URLs into Devpost.
+The public Cloud Run service was smoke-tested on 2026-06-05 with `/health`, `/cases`, first-screen CASE-003 source preview, and `CASE-003` (`include_evidence=false`). The read-only pages are public; the Vertex-backed `/run` action should use the testing access token supplied in Devpost notes to control spend. Do not paste local service URLs into Devpost.
 
 ## Problem
 
@@ -55,7 +55,7 @@ The default demo case (`CASE-003`) is a rectal-cancer staging conflict. The agen
 
 ## Google Cloud / Agent Technology Used
 
-- Gemini reasoning via Vertex AI: `gemini-3.1-flash-lite`, project `gen-lang-client-0384080704`, location `global`.
+- Gemini reasoning via Vertex AI: `gemini-3.1-flash-lite` at `location=global`.
 - ADK orchestration: `SequentialAgent` with a `LoopAgent` review loop and separate `documentation`, `qc`, and `evidence` LLM sub-agents.
 - MCP boundary: data tools are exposed through a real MCP stdio server and consumed through an ADK MCP toolset.
 - Cloud Run target: a FastAPI judge UI/API packaged by Docker, using a runtime service account with Vertex AI permissions.
@@ -136,6 +136,6 @@ The optimization story is also deliberately honest: the submitted project does n
 - Region: EMEA
 - Theme/Track: Optimize
 - Status: Challenge submission package
-- Testing access URL: https://notatnik-adk-slice-307066208186.europe-west1.run.app
+- Testing access URL: https://notatnik-adk-slice-307066208186.europe-west1.run.app/?token=<paste-token-in-Devpost-notes>
 - Video URL: https://chmura.radioonkolog.pl/s/nWsCwkRQDiLmJ4k
 - Code URL: https://github.com/kstawiski/notatnik-adk-slice-public

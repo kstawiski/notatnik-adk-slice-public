@@ -35,6 +35,9 @@ status = service.get("status", {})
 template_metadata = service.get("spec", {}).get("template", {}).get("metadata", {})
 annotations = metadata.get("annotations", {})
 template_annotations = template_metadata.get("annotations", {})
+containers = service.get("spec", {}).get("template", {}).get("spec", {}).get("containers", [])
+env_items = containers[0].get("env", []) if containers else []
+env = {item.get("name"): item.get("value", "") for item in env_items}
 
 rows = [
     ("service", metadata.get("name", "")),
@@ -43,6 +46,11 @@ rows = [
     ("minScale", template_annotations.get("autoscaling.knative.dev/minScale", "0 (default)")),
     ("maxScale", template_annotations.get("autoscaling.knative.dev/maxScale", "")),
     ("latestReadyRevision", status.get("latestReadyRevisionName", "")),
+    ("runAccessToken", "configured" if env.get("RUN_ACCESS_TOKEN") else "missing"),
+    ("runRateLimit", env.get("RUN_RATE_LIMIT_PER_MINUTE", "")),
+    ("globalRunRateLimit", env.get("RUN_GLOBAL_RATE_LIMIT_PER_MINUTE", "")),
+    ("allowEvidence", env.get("ALLOW_EVIDENCE", "")),
+    ("maxAgentIterations", env.get("MAX_AGENT_ITERATIONS", "")),
 ]
 
 width = max(len(k) for k, _ in rows)

@@ -29,8 +29,8 @@ layer only — no clinical IP. Synthetic data only.
   tools over a real ADK **MCP toolset** (stdio). QC halts on an injected error (missing TNM
   / staging contradiction) and the loop self-corrects.
 - `service/` + `deploy/` - C6: FastAPI judge UI/API for Cloud Run. It wraps the ADK run,
-  returns a before/after reliability trace, and applies a deterministic non-proprietary
-  source-identifier scrub before generated draft/evidence/trace text is returned.
+  returns before/after output plus minimized trace metrics, and applies a deterministic
+  non-proprietary source-identifier scrub before generated draft/evidence text is returned.
 
 ## Run
 
