@@ -1,5 +1,7 @@
 # Notatnik Medyczny — ADK Reliability Slice (Google AI Agents Challenge, Track 2)
 
+https://www.youtube.com/watch?v=_AbskQIVIyo
+
 A new ADK multi-agent slice that reasons on **Gemini via Vertex AI** and models a
 clinical-documentation backend boundary through synthetic MCP data tools. Engineering
 layer only — no clinical IP. Synthetic data only.
